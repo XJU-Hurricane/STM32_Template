@@ -1,0 +1,103 @@
+BasedOnStyle: Microsoft
+
+IndentWidth: 4
+
+ColumnLimit: 80
+
+# 预处理指示(PPD-PreProcessor Directive)缩进, 建议None
+# - None: 不缩进
+# - AfterHash: #不缩进, #后面的指示缩进
+# - BeforeHash: #跟前缩进
+IndentPPDirectives: BeforeHash
+# 指针对齐, 建议Right
+PointerAlignment: Right
+
+# 大括号换行
+BraceWrapping:
+  # 在case后的大括号是否换行
+  AfterCaseLabel: false
+  # class后
+  AfterClass: false
+  # 控制语句(if/for/while/switch/...)后是否换行
+  # - Never: 永远不, 即永远将语句体的大括号放置于控制语句同一行
+  # - MultiLine: 多行控制语句才进行换行
+  # - Always: 永远换行, 建议
+  AfterControlStatement: Never
+  # 下面比较容易理解, 不再作无意义的解释
+  AfterEnum: false
+  AfterFunction: false
+  AfterNamespace: false
+  AfterObjCDeclaration: false
+  AfterStruct: false
+  AfterUnion: false
+  AfterExternBlock: false
+  BeforeCatch: false
+  BeforeElse: false
+  BeforeLambdaBody: false
+  BeforeWhile: false
+  IndentBraces: false
+  SplitEmptyFunction: false
+  SplitEmptyRecord: false
+  SplitEmptyNamespace: false
+# 连续赋值语句的对齐，即多个赋值语句连续出现时的对齐策略配置, 包含多个子配置项
+AlignConsecutiveAssignments:
+  # 是否启用, 建议不启用
+  Enabled: false
+  # 是否跨过空行, 即多个对齐语句中间有空行时, 是否跨过, 如果要开启连续赋值语句的配置, 建议为false
+  AcrossEmptyLines: false
+  # 同AcrossComments: 即是否跨过注释, 建议false
+  AcrossComments: false
+  # 是否跨过复合语句(包括空行及注释), 建议False
+  AlignCompound: false
+  # 是否(右)对齐赋值操作的操作符, 建议true
+  PadOperators: true
+
+# 右括号语句是否换行
+BreakBeforeBraces: Attach
+
+# 同AlignConsecutiveAssignments, 表示连续位定义语句出现时, 是否需要对齐:符号, 位变量定义用得少, 可以不开启
+AlignConsecutiveBitFields:
+  # 是否启用, 建议不启用
+  Enabled: false
+  # 同AlignConsecutiveAssignments
+  AcrossEmptyLines: false
+  # 同AlignConsecutiveAssignments
+  AcrossComments: false
+  # 只在AlignConsecutiveAssignments配置中有效, 自动生成的clang-format有此项, 忽略
+  AlignCompound: false
+  # 只在AlignConsecutiveAssignments配置中有效, 自动生成的clang-format有此项, 忽略
+  PadOperators: false
+
+# 是否对齐连续声明, 同AlignConsecutiveDeclarations
+AlignConsecutiveDeclarations:
+  Enabled: false
+  AcrossEmptyLines: false
+  AcrossComments: false
+  AlignCompound: false
+  PadOperators: false
+AlignConsecutiveMacros:
+  Enabled: true
+  AcrossEmptyLines: true
+  AcrossComments: true
+  # 只在AlignConsecutiveAssignments配置中有效, 自动生成的clang-format有此项, 忽略
+  AlignCompound: true
+  # 只在AlignConsecutiveAssignments配置中有效, 自动生成的clang-format有此项, 忽略
+  PadOperators: true
+
+# 续行符(\\)对齐:
+# - DontAlign: 不做操作
+# - Left: 尽可能向左对齐, 即最长一行代码为准
+# - Right: 跟开发都写的最远的\\对齐(即不会自动缩减你的空格), 建议使用这个
+AlignEscapedNewlines: Right
+
+# 允许短语法块在单行上
+AllowShortBlocksOnASingleLine: Empty
+
+# 允许短函数在单行上
+AllowShortFunctionsOnASingleLine: Empty
+
+# case标签缩进
+IndentCaseLabels: true
+
+# if, while, for单行自动加括号
+InsertBraces: true

@@ -1,0 +1,29 @@
+{
+    "version": 3,
+    "beforeBuildTasks": [],
+    "afterBuildTasks": [],
+    "global": {
+        "use-microLIB": true,
+        "output-debug-info": "enable"
+    },
+    "c/cpp-compiler": {
+        "optimization": "level-0",
+        "language-c": "c11",
+        "language-cpp": "c++11",
+        "one-elf-section-per-function": true,
+        "short-enums#wchar": true,
+        "warnings": "all-warnings",
+        "link-time-optimization": true,
+        "misc-controls": "-Wno-padded -Wno-unsafe-buffer-usage -Wno-reserved-identifier -Wno-missing-noreturn -Wno-covered-switch-default -Wno-switch-enum -Wno-missing-prototypes -Wno-newline-eof -Wno-gnu-pointer-arith -Wno-declaration-after-statement"
+    },
+    "asm-compiler": {
+        "$use": "asm-auto",
+        "misc-controls": "--diag_suppress=1950"
+    },
+    "linker": {
+        "output-format": "elf",
+        "misc-controls": "--diag_suppress=L6329",
+        "ro-base": "0x08000000",
+        "rw-base": "0x20000000"
+    }
+}

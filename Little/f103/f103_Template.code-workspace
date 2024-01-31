@@ -1,0 +1,30 @@
+{
+    "folders": [
+        {
+            "path": "."
+        }
+    ],
+    "settings": {
+        "files.associations": {
+            "*.s": "a251",
+            "*.cpp": "cpp",
+            "delay.h": "c",
+            "sys.h": "c",
+            "usart.h": "c",
+            "led.h": "c",
+            "key.h": "c",
+            "main.h": "c",
+            "stm32f1xx_hal.h": "c",
+            "stm32f1xx_hal_def.h": "c",
+            "stm32f1xx.h": "c",
+            "stdbool.h": "c",
+            "stdlib.h": "c",
+            "stdint.h": "c",
+            "dma_uart.h": "c",
+            "uart.h": "c",
+            "ring_fifo.h": "c",
+            "inttypes.h": "c"
+        }
+    },
+    "extensions": {}
+}

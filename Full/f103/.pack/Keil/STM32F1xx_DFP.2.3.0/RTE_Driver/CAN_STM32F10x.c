@@ -1,25 +1,24 @@
 /* -----------------------------------------------------------------------------
- * Copyright (c) 2013-2018 Arm Limited
+ * Copyright (c) 2013-2018 Arm Limited (or its affiliates). All 
+ * rights reserved.
  *
- * This software is provided 'as-is', without any express or implied warranty.
- * In no event will the authors be held liable for any damages arising from
- * the use of this software. Permission is granted to anyone to use this
- * software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
+ * SPDX-License-Identifier: Apache-2.0
  *
- * 1. The origin of this software must not be misrepresented; you must not
- *    claim that you wrote the original software. If you use this software in
- *    a product, an acknowledgment in the product documentation would be
- *    appreciated but is not required.
+ * Licensed under the Apache License, Version 2.0 (the License); you may
+ * not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * 2. Altered source versions must be plainly marked as such, and must not be
- *    misrepresented as being the original software.
+ * www.apache.org/licenses/LICENSE-2.0
  *
- * 3. This notice may not be removed or altered from any source distribution.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  *
- * $Date:        11. September 2018
- * $Revision:    V1.9
+ * $Date:        13. November 2018
+ * $Revision:    V1.10
  *
  * Driver:       Driver_CAN1/2
  * Configured:   via RTE_Device.h configuration file
@@ -46,6 +45,9 @@
  * -------------------------------------------------------------------------- */
 
 /* History:
+ *  Version 1.10
+ *    Corrected SetBitrate function to leave Silent and Loopback mode as they were
+ *    Corrected SetMode function to clear Silent and Loopback mode when NORMAL mode is activated
  *  Version 1.9
  *    Corrected MessageSend function to only access required data for sending
  *  Version 1.8
@@ -101,7 +103,7 @@
 
 // CAN Driver ******************************************************************
 
-#define ARM_CAN_DRV_VERSION ARM_DRIVER_VERSION_MAJOR_MINOR(1,9)         // CAN driver version
+#define ARM_CAN_DRV_VERSION ARM_DRIVER_VERSION_MAJOR_MINOR(1,10)        // CAN driver version
 
 // Driver Version
 static const ARM_DRIVER_VERSION can_driver_version = { ARM_CAN_API_VERSION, ARM_CAN_DRV_VERSION };
@@ -861,7 +863,7 @@ static int32_t CANx_SetBitrate (ARM_CAN_BITRATE_SELECT select, uint32_t bitrate,
   ptr_CAN->MCR = CAN_MCR_INRQ;                  // Activate initialization mode
   while ((ptr_CAN->MSR&CAN_MSR_INAK) == 0U);    // Wait to enter initialization mode
 
-  ptr_CAN->BTR = ((brp - 1U) & CAN_BTR_BRP) | ((sjw - 1U) << 24) | ((phase_seg2 - 1U) << 20) | ((prop_seg + phase_seg1 - 1U) << 16);
+  ptr_CAN->BTR = (ptr_CAN->BTR & (CAN_BTR_LBKM | CAN_BTR_SILM)) | ((brp - 1U) & CAN_BTR_BRP) | ((sjw - 1U) << 24) | ((phase_seg2 - 1U) << 20) | ((prop_seg + phase_seg1 - 1U) << 16);
   ptr_CAN->MCR =  mcr;                          // Return to previous mode
 
   return ARM_DRIVER_OK;
@@ -903,6 +905,8 @@ static int32_t CANx_SetMode (ARM_CAN_MODE mode, uint8_t x) {
       event = ARM_CAN_EVENT_UNIT_BUS_OFF;
       break;
     case ARM_CAN_MODE_NORMAL:
+      ptr_CAN->MCR |=  CAN_MCR_INRQ;            // Enter initialization mode
+      while ((ptr_CAN->MSR&CAN_MSR_INAK)==0U);  // Wait to enter initialization mode
       ptr_CAN->BTR &=~(CAN_BTR_LBKM | CAN_BTR_SILM);
       ptr_CAN->MCR  =  CAN_MCR_ABOM |           // Activate automatic bus-off
                        CAN_MCR_AWUM ;           // Enable automatic wakeup mode

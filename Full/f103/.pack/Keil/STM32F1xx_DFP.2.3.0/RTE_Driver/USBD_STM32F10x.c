@@ -1,25 +1,24 @@
 /* -----------------------------------------------------------------------------
- * Copyright (c) 2013-2017 ARM Ltd.
+ * Copyright (c) 2013-2019 Arm Limited (or its affiliates). All 
+ * rights reserved.
  *
- * This software is provided 'as-is', without any express or implied warranty.
- * In no event will the authors be held liable for any damages arising from
- * the use of this software. Permission is granted to anyone to use this
- * software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
+ * SPDX-License-Identifier: Apache-2.0
  *
- * 1. The origin of this software must not be misrepresented; you must not
- *    claim that you wrote the original software. If you use this software in
- *    a product, an acknowledgment in the product documentation would be
- *    appreciated but is not required.
+ * Licensed under the Apache License, Version 2.0 (the License); you may
+ * not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * 2. Altered source versions must be plainly marked as such, and must not be
- *    misrepresented as being the original software.
+ * www.apache.org/licenses/LICENSE-2.0
  *
- * 3. This notice may not be removed or altered from any source distribution.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  *
- * $Date:        19. September 2017
- * $Revision:    V2.1
+ * $Date:        5. June 2019
+ * $Revision:    V2.2
  *
  * Driver:       Driver_USBD0
  * Configured:   via RTE_Device.h configuration file 
@@ -34,6 +33,9 @@
  * -------------------------------------------------------------------- */
 
 /* History:
+ *  Version 2.2
+ *    Updated USBD_EndpointConfigure function to check that maximum packet 
+ *    size requested fits into configured FIFO (compile time configured)
  *  Version 2.1
  *    Added support for CMSIS-RTOS2
  *  Version 2.0
@@ -166,7 +168,7 @@
 
 // USBD Driver *****************************************************************
 
-#define ARM_USBD_DRV_VERSION ARM_DRIVER_VERSION_MAJOR_MINOR(2,1)
+#define ARM_USBD_DRV_VERSION ARM_DRIVER_VERSION_MAJOR_MINOR(2,2)
 
 // Driver Version
 static const ARM_DRIVER_VERSION usbd_driver_version = { ARM_USBD_API_VERSION, ARM_USBD_DRV_VERSION };
@@ -212,6 +214,24 @@ static const uint16_t EP_buff_offset[16] = { USB_EP0_RX_BUF_OFFSET, USB_EP0_TX_B
                                              USB_EP5_RX_BUF_OFFSET, USB_EP5_TX_BUF_OFFSET,
                                              USB_EP6_RX_BUF_OFFSET, USB_EP6_TX_BUF_OFFSET,
                                              USB_EP7_RX_BUF_OFFSET, USB_EP7_TX_BUF_OFFSET };
+
+static const uint16_t EP_rx_buff_size[8] = { USB_EP0_RX_BUF_SIZE,
+                                             USB_EP1_RX_BUF_SIZE,
+                                             USB_EP2_RX_BUF_SIZE,
+                                             USB_EP3_RX_BUF_SIZE,
+                                             USB_EP4_RX_BUF_SIZE,
+                                             USB_EP5_RX_BUF_SIZE,
+                                             USB_EP6_RX_BUF_SIZE,
+                                             USB_EP7_RX_BUF_SIZE };
+
+static const uint16_t EP_tx_buff_size[8] = { USB_EP0_TX_BUF_SIZE,
+                                             USB_EP1_TX_BUF_SIZE,
+                                             USB_EP2_TX_BUF_SIZE,
+                                             USB_EP3_TX_BUF_SIZE,
+                                             USB_EP4_TX_BUF_SIZE,
+                                             USB_EP5_TX_BUF_SIZE,
+                                             USB_EP6_TX_BUF_SIZE,
+                                             USB_EP7_TX_BUF_SIZE };
 
 // Endpoints runtime information
 static volatile ENDPOINT_t ep[(USBD_MAX_ENDPOINT_NUM + 1U) * 2U];
@@ -610,14 +630,19 @@ static int32_t USBD_EndpointConfigure (uint8_t  ep_addr,
   uint32_t             ep_reg;
 
   ep_num = EP_NUM(ep_addr);
-  if (ep_num > USBD_MAX_ENDPOINT_NUM) { return ARM_DRIVER_ERROR; }
+  ep_dir = (ep_addr & ARM_USB_ENDPOINT_DIRECTION_MASK) == ARM_USB_ENDPOINT_DIRECTION_MASK;
+  ep_mps =  ep_max_packet_size & ARM_USB_ENDPOINT_MAX_PACKET_SIZE_MASK;
+
+  if (ep_num > USBD_MAX_ENDPOINT_NUM) { return ARM_DRIVER_ERROR_PARAMETER; }
+  if (ep_dir) {                        // IN endpoint
+    if (ep_mps > EP_tx_buff_size[ep_num]) { return ARM_DRIVER_ERROR_PARAMETER; }
+  } else {                             // OUT endpoint
+    if (ep_mps > EP_rx_buff_size[ep_num]) { return ARM_DRIVER_ERROR_PARAMETER; }
+  }
   if (hw_powered == false)            { return ARM_DRIVER_ERROR; }
 
   ptr_ep = &ep[EP_ID(ep_addr)];
   if (ptr_ep->active != 0U)           { return ARM_DRIVER_ERROR_BUSY; }
-
-  ep_mps =  ep_max_packet_size & ARM_USB_ENDPOINT_MAX_PACKET_SIZE_MASK;
-  ep_dir = (ep_addr & ARM_USB_ENDPOINT_DIRECTION_MASK) == ARM_USB_ENDPOINT_DIRECTION_MASK;
 
   // Check Endpoint buffer size configuration
   if ((ep_mps + EP_buff_offset[EP_ID(ep_addr)]) > EP_buff_offset[EP_ID(ep_addr) + 1]) {
@@ -692,7 +717,7 @@ static int32_t USBD_EndpointUnconfigure (uint8_t ep_addr) {
   bool                 ep_dir;
 
   ep_num = EP_NUM(ep_addr);
-  if (ep_num > USBD_MAX_ENDPOINT_NUM) { return ARM_DRIVER_ERROR; }
+  if (ep_num > USBD_MAX_ENDPOINT_NUM) { return ARM_DRIVER_ERROR_PARAMETER; }
   if (hw_powered == false)            { return ARM_DRIVER_ERROR; }
 
   ptr_ep = &ep[EP_ID(ep_addr)];
@@ -731,7 +756,7 @@ static int32_t USBD_EndpointStall (uint8_t ep_addr, bool stall) {
   bool                 ep_dir;
 
   ep_num = EP_NUM(ep_addr);
-  if (ep_num > USBD_MAX_ENDPOINT_NUM) { return ARM_DRIVER_ERROR; }
+  if (ep_num > USBD_MAX_ENDPOINT_NUM) { return ARM_DRIVER_ERROR_PARAMETER; }
   if (hw_powered == false)            { return ARM_DRIVER_ERROR; }
 
   ptr_ep = &ep[EP_ID(ep_addr)];
@@ -774,7 +799,7 @@ static int32_t USBD_EndpointTransfer (uint8_t ep_addr, uint8_t *data, uint32_t n
   bool                 ep_dir;
 
   ep_num = EP_NUM(ep_addr);
-  if (ep_num > USBD_MAX_ENDPOINT_NUM) { return ARM_DRIVER_ERROR; }
+  if (ep_num > USBD_MAX_ENDPOINT_NUM) { return ARM_DRIVER_ERROR_PARAMETER; }
   if (hw_powered == false)            { return ARM_DRIVER_ERROR; }
 
   ptr_ep = &ep[EP_ID(ep_addr)];
@@ -827,7 +852,7 @@ static int32_t USBD_EndpointTransferAbort (uint8_t ep_addr) {
   bool                 ep_dir;
 
   ep_num = EP_NUM(ep_addr);
-  if (ep_num > USBD_MAX_ENDPOINT_NUM) { return ARM_DRIVER_ERROR; }
+  if (ep_num > USBD_MAX_ENDPOINT_NUM) { return ARM_DRIVER_ERROR_PARAMETER; }
   if (hw_powered == false)            { return ARM_DRIVER_ERROR; }
 
   ep_dir = (ep_addr & ARM_USB_ENDPOINT_DIRECTION_MASK) == ARM_USB_ENDPOINT_DIRECTION_MASK;

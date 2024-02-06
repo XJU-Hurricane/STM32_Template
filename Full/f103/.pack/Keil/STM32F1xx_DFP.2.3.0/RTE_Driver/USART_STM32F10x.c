@@ -1,21 +1,20 @@
 /* -----------------------------------------------------------------------------
- * Copyright (c) 2013-2017 ARM Ltd.
+ * Copyright (c) 2013-2017 Arm Limited (or its affiliates). All 
+ * rights reserved.
  *
- * This software is provided 'as-is', without any express or implied warranty.
- * In no event will the authors be held liable for any damages arising from
- * the use of this software. Permission is granted to anyone to use this
- * software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
+ * SPDX-License-Identifier: Apache-2.0
  *
- * 1. The origin of this software must not be misrepresented; you must not
- *    claim that you wrote the original software. If you use this software in
- *    a product, an acknowledgment in the product documentation would be
- *    appreciated but is not required.
+ * Licensed under the Apache License, Version 2.0 (the License); you may
+ * not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * 2. Altered source versions must be plainly marked as such, and must not be
- *    misrepresented as being the original software.
+ * www.apache.org/licenses/LICENSE-2.0
  *
- * 3. This notice may not be removed or altered from any source distribution.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  *
  * $Date:        11. July 2017
@@ -2135,7 +2134,7 @@ void USART_RX_DMA_Complete(const USART_RESOURCES *usart) {
 #ifdef MX_USART1
 // USART1 Driver Wrapper functions
 static ARM_USART_CAPABILITIES  USART1_GetCapabilities (void)                                                { return USART_GetCapabilities (&USART1_Resources); }
-static int32_t                 usart1_initialize      (ARM_USART_SignalEvent_t cb_event)                    { return USART_Initialize (cb_event, &USART1_Resources); }
+static int32_t                 USART1_Initialize      (ARM_USART_SignalEvent_t cb_event)                    { return USART_Initialize (cb_event, &USART1_Resources); }
 static int32_t                 USART1_Uninitialize    (void)                                                { return USART_Uninitialize (&USART1_Resources); }
 static int32_t                 USART1_PowerControl    (ARM_POWER_STATE state)                               { return USART_PowerControl (state, &USART1_Resources); }
 static int32_t                 USART1_Send            (const void *data, uint32_t num)                      { return USART_Send (data, num, &USART1_Resources); }
@@ -2160,7 +2159,7 @@ static ARM_USART_MODEM_STATUS  USART1_GetModemStatus  (void)                    
 ARM_DRIVER_USART Driver_USART1 = {
     USARTx_GetVersion,
     USART1_GetCapabilities,
-    usart1_initialize,
+    USART1_Initialize,
     USART1_Uninitialize,
     USART1_PowerControl,
     USART1_Send, 
@@ -2178,7 +2177,7 @@ ARM_DRIVER_USART Driver_USART1 = {
 #ifdef MX_USART2
 // USART2 Driver Wrapper functions
 static ARM_USART_CAPABILITIES  USART2_GetCapabilities (void)                                                { return USART_GetCapabilities (&USART2_Resources); }
-static int32_t                 usart2_initialize      (ARM_USART_SignalEvent_t cb_event)                    { return USART_Initialize (cb_event, &USART2_Resources); }
+static int32_t                 USART2_Initialize      (ARM_USART_SignalEvent_t cb_event)                    { return USART_Initialize (cb_event, &USART2_Resources); }
 static int32_t                 USART2_Uninitialize    (void)                                                { return USART_Uninitialize (&USART2_Resources); }
 static int32_t                 USART2_PowerControl    (ARM_POWER_STATE state)                               { return USART_PowerControl (state, &USART2_Resources); }
 static int32_t                 USART2_Send            (const void *data, uint32_t num)                      { return USART_Send (data, num, &USART2_Resources); }
@@ -2203,7 +2202,7 @@ static ARM_USART_MODEM_STATUS  USART2_GetModemStatus  (void)                    
 ARM_DRIVER_USART Driver_USART2 = {
     USARTx_GetVersion,
     USART2_GetCapabilities,
-    usart2_initialize,
+    USART2_Initialize,
     USART2_Uninitialize,
     USART2_PowerControl,
     USART2_Send, 
@@ -2221,7 +2220,7 @@ ARM_DRIVER_USART Driver_USART2 = {
 #ifdef MX_USART3
 // USART3 Driver Wrapper functions
 static ARM_USART_CAPABILITIES  USART3_GetCapabilities (void)                                                { return USART_GetCapabilities (&USART3_Resources); }
-static int32_t                 usart3_initialize      (ARM_USART_SignalEvent_t cb_event)                    { return USART_Initialize (cb_event, &USART3_Resources); }
+static int32_t                 USART3_Initialize      (ARM_USART_SignalEvent_t cb_event)                    { return USART_Initialize (cb_event, &USART3_Resources); }
 static int32_t                 USART3_Uninitialize    (void)                                                { return USART_Uninitialize (&USART3_Resources); }
 static int32_t                 USART3_PowerControl    (ARM_POWER_STATE state)                               { return USART_PowerControl (state, &USART3_Resources); }
 static int32_t                 USART3_Send            (const void *data, uint32_t num)                      { return USART_Send (data, num, &USART3_Resources); }
@@ -2246,7 +2245,7 @@ static ARM_USART_MODEM_STATUS  USART3_GetModemStatus  (void)                    
 ARM_DRIVER_USART Driver_USART3 = {
     USARTx_GetVersion,
     USART3_GetCapabilities,
-    usart3_initialize,
+    USART3_Initialize,
     USART3_Uninitialize,
     USART3_PowerControl,
     USART3_Send, 
@@ -2264,7 +2263,7 @@ ARM_DRIVER_USART Driver_USART3 = {
 #ifdef MX_UART4
 // USART4 Driver Wrapper functions
 static ARM_USART_CAPABILITIES  USART4_GetCapabilities (void)                                                { return USART_GetCapabilities (&USART4_Resources); }
-static int32_t                 usart4_initialize      (ARM_USART_SignalEvent_t cb_event)                    { return USART_Initialize (cb_event, &USART4_Resources); }
+static int32_t                 USART4_Initialize      (ARM_USART_SignalEvent_t cb_event)                    { return USART_Initialize (cb_event, &USART4_Resources); }
 static int32_t                 USART4_Uninitialize    (void)                                                { return USART_Uninitialize (&USART4_Resources); }
 static int32_t                 USART4_PowerControl    (ARM_POWER_STATE state)                               { return USART_PowerControl (state, &USART4_Resources); }
 static int32_t                 USART4_Send            (const void *data, uint32_t num)                      { return USART_Send (data, num, &USART4_Resources); }
@@ -2289,7 +2288,7 @@ static ARM_USART_MODEM_STATUS  USART4_GetModemStatus  (void)                    
 ARM_DRIVER_USART Driver_USART4 = {
     USARTx_GetVersion,
     USART4_GetCapabilities,
-    usart4_initialize,
+    USART4_Initialize,
     USART4_Uninitialize,
     USART4_PowerControl,
     USART4_Send, 
@@ -2307,7 +2306,7 @@ ARM_DRIVER_USART Driver_USART4 = {
 #ifdef MX_UART5
 // USART5 Driver Wrapper functions
 static ARM_USART_CAPABILITIES  USART5_GetCapabilities (void)                                                { return USART_GetCapabilities (&USART5_Resources); }
-static int32_t                 usart5_initialize      (ARM_USART_SignalEvent_t cb_event)                    { return USART_Initialize (cb_event, &USART5_Resources); }
+static int32_t                 USART5_Initialize      (ARM_USART_SignalEvent_t cb_event)                    { return USART_Initialize (cb_event, &USART5_Resources); }
 static int32_t                 USART5_Uninitialize    (void)                                                { return USART_Uninitialize (&USART5_Resources); }
 static int32_t                 USART5_PowerControl    (ARM_POWER_STATE state)                               { return USART_PowerControl (state, &USART5_Resources); }
 static int32_t                 USART5_Send            (const void *data, uint32_t num)                      { return USART_Send (data, num, &USART5_Resources); }
@@ -2332,7 +2331,7 @@ static ARM_USART_MODEM_STATUS  USART5_GetModemStatus  (void)                    
 ARM_DRIVER_USART Driver_USART5 = {
     USARTx_GetVersion,
     USART5_GetCapabilities,
-    usart5_initialize,
+    USART5_Initialize,
     USART5_Uninitialize,
     USART5_PowerControl,
     USART5_Send, 

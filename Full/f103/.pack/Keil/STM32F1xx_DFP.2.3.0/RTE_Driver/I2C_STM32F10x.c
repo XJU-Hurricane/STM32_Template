@@ -1,25 +1,24 @@
 /* -----------------------------------------------------------------------------
- * Copyright (c) 2013-2015 ARM Ltd.
+ * Copyright (c) 2013-2020 Arm Limited (or its affiliates). All 
+ * rights reserved.
  *
- * This software is provided 'as-is', without any express or implied warranty.
- * In no event will the authors be held liable for any damages arising from
- * the use of this software. Permission is granted to anyone to use this
- * software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
+ * SPDX-License-Identifier: Apache-2.0
  *
- * 1. The origin of this software must not be misrepresented; you must not
- *    claim that you wrote the original software. If you use this software in
- *    a product, an acknowledgment in the product documentation would be
- *    appreciated but is not required.
+ * Licensed under the Apache License, Version 2.0 (the License); you may
+ * not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * 2. Altered source versions must be plainly marked as such, and must not be
- *    misrepresented as being the original software.
+ * www.apache.org/licenses/LICENSE-2.0
  *
- * 3. This notice may not be removed or altered from any source distribution.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  *
- * $Date:        21. October 2015
- * $Revision:    V2.1
+ * $Date:        27. November 2020
+ * $Revision:    V2.2
  *
  * Driver:       Driver_I2C1, Driver_I2C2
  * Configured:   via RTE_Device.h configuration file
@@ -35,6 +34,9 @@
  * -------------------------------------------------------------------------- */
 
 /* History:
+ *  Version 2.2
+ *    Replaced empty delay loops with _NOP
+ *    Updated I2C_GetDataCount (Returned -1 when Slave is not addressed by Master)
  *  Version 2.1
  *    Corrected invalid __I2C_DMA field in I2C_DMA_TxEvent and I2C_DMA_RxEvent functions (corrected from instance into reg)
  *  Version 2.0
@@ -50,7 +52,7 @@
 
 #include "I2C_STM32F10x.h"
 
-#define ARM_I2C_DRV_VERSION ARM_DRIVER_VERSION_MAJOR_MINOR(2,1)    /* driver version */
+#define ARM_I2C_DRV_VERSION ARM_DRIVER_VERSION_MAJOR_MINOR(2,2)    /* driver version */
 
 
 /* Driver Version */
@@ -377,7 +379,7 @@ static int32_t I2C_MasterTransmit (uint32_t       addr,
   if ((i2c->info->xfer.ctrl & XFER_CTRL_XPENDING) == 0U) {
     /* New transfer */
     while (i2c->reg->SR2 & I2C_SR2_BUSY) {
-      ; /* Wait until bus released */
+      __NOP(); /* Wait until bus released */
     }
   }
 
@@ -456,7 +458,7 @@ static int32_t I2C_MasterReceive (uint32_t       addr,
   if ((i2c->info->xfer.ctrl & XFER_CTRL_XPENDING) == 0U) {
     /* New transfer */
     while (i2c->reg->SR2 & I2C_SR2_BUSY) {
-      ; /* Wait until bus released */
+      __NOP(); /* Wait until bus released */
     }
   }
 
@@ -623,7 +625,17 @@ static int32_t I2C_SlaveReceive (uint8_t *data, uint32_t num, I2C_RESOURCES *i2c
   \return      number of data bytes transferred; -1 when Slave is not addressed by Master
 */
 static int32_t I2C_GetDataCount (I2C_RESOURCES *i2c) {
-  return ((int32_t)i2c->info->xfer.cnt);
+  int32_t val;
+
+  if ((i2c->info->status.mode == 0U) && ((i2c->info->xfer.ctrl & XFER_CTRL_ADDR_DONE) == 0U)) {
+    /* Slave is not addressed */
+    val = -1;
+  }
+  else {
+    val = (int32_t)i2c->info->xfer.cnt;
+  }
+
+  return (val);
 }
 
 
@@ -722,20 +734,27 @@ static int32_t I2C_Control (uint32_t control, uint32_t arg, I2C_RESOURCES *i2c) 
         }
         /* Clock high */
         GPIO_PinWrite (i2c->io.scl_port, i2c->io.scl_pin, 1);
-        for (j = 0; j < pclk; j++);
-
+        for (j = 0; j < pclk; j++) {
+          __NOP();
+        }
         /* Clock low */
         GPIO_PinWrite (i2c->io.scl_port, i2c->io.scl_pin, 0);
-        for (j = 0; j < pclk; j++);
+        for (j = 0; j < pclk; j++) {
+          __NOP();
+        }
       }
       /* Check SDA state */
       state = GPIO_PinRead (i2c->io.sda_port, i2c->io.sda_pin);
 
       /* Generate STOP condition - SDA goes high while SCL is high */
       GPIO_PinWrite (i2c->io.sda_port, i2c->io.sda_pin, 0);
-      for (j = 0; j < pclk; j++);
+      for (j = 0; j < pclk; j++) {
+          __NOP();
+        }
       GPIO_PinWrite (i2c->io.scl_port, i2c->io.scl_pin, 1);
-      for (j = 0; j < pclk; j++);
+      for (j = 0; j < pclk; j++) {
+          __NOP();
+        }
       GPIO_PinWrite (i2c->io.sda_port, i2c->io.sda_pin, 1);
 
       /* Configure SCL Pin as I2C peripheral pin */

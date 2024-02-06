@@ -1,13 +1,31 @@
-/* ----------------------------------------------------------------------
- * Copyright (C) 2015 ARM Limited. All rights reserved.
- *  
- * $Date:        27. August 2013
- * $Revision:    V1.2
+/* -----------------------------------------------------------------------------
+ * Copyright (c) 2013-2020 Arm Limited (or its affiliates). All 
+ * rights reserved.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the License); you may
+ * not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ *
+ * $Date:        27. November 2020
+ * $Revision:    V1.3
  *  
  * Project:      DMA Driver for ST STM32F10x
  * -------------------------------------------------------------------- */
 
 /* History:
+ *  Version 1.3
+ *    Added support for ARM Compiler 6
  *  Version 1.2
  *    DMAx_Channel variable is checked for initialized channels in DMA_ChannelUninitialize function
  *  Version 1.1
@@ -280,22 +298,22 @@ void DMA_ChannelUninitialize (uint32_t dma, uint32_t channel) {
 
 
 /// DMA1 Channel Events
-__weak void DMA1_Channel1_Event (uint32_t event) {;}
-__weak void DMA1_Channel2_Event (uint32_t event) {;}
-__weak void DMA1_Channel3_Event (uint32_t event) {;}
-__weak void DMA1_Channel4_Event (uint32_t event) {;}
-__weak void DMA1_Channel5_Event (uint32_t event) {;}
-__weak void DMA1_Channel6_Event (uint32_t event) {;}
-__weak void DMA1_Channel7_Event (uint32_t event) {;}
+__WEAK void DMA1_Channel1_Event (uint32_t event) {;}
+__WEAK void DMA1_Channel2_Event (uint32_t event) {;}
+__WEAK void DMA1_Channel3_Event (uint32_t event) {;}
+__WEAK void DMA1_Channel4_Event (uint32_t event) {;}
+__WEAK void DMA1_Channel5_Event (uint32_t event) {;}
+__WEAK void DMA1_Channel6_Event (uint32_t event) {;}
+__WEAK void DMA1_Channel7_Event (uint32_t event) {;}
 
 
 #if defined (STM32F10X_ENABLE_DMA2)
 /// DMA2 Channel Events
-__weak void DMA2_Channel1_Event (uint32_t event) {;}
-__weak void DMA2_Channel2_Event (uint32_t event) {;}
-__weak void DMA2_Channel3_Event (uint32_t event) {;}
-__weak void DMA2_Channel4_Event (uint32_t event) {;}
-__weak void DMA2_Channel5_Event (uint32_t event) {;}
+__WEAK void DMA2_Channel1_Event (uint32_t event) {;}
+__WEAK void DMA2_Channel2_Event (uint32_t event) {;}
+__WEAK void DMA2_Channel3_Event (uint32_t event) {;}
+__WEAK void DMA2_Channel4_Event (uint32_t event) {;}
+__WEAK void DMA2_Channel5_Event (uint32_t event) {;}
 #endif
 
 /**

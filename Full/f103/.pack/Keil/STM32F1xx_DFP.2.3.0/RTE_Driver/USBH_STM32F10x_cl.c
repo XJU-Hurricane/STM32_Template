@@ -1,25 +1,24 @@
 /* -----------------------------------------------------------------------------
- * Copyright (c) 2013-2017 ARM Ltd.
+ * Copyright (c) 2013-2021 Arm Limited (or its affiliates). All 
+ * rights reserved.
  *
- * This software is provided 'as-is', without any express or implied warranty.
- * In no event will the authors be held liable for any damages arising from
- * the use of this software. Permission is granted to anyone to use this
- * software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
+ * SPDX-License-Identifier: Apache-2.0
  *
- * 1. The origin of this software must not be misrepresented; you must not
- *    claim that you wrote the original software. If you use this software in
- *    a product, an acknowledgment in the product documentation would be
- *    appreciated but is not required.
+ * Licensed under the Apache License, Version 2.0 (the License); you may
+ * not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * 2. Altered source versions must be plainly marked as such, and must not be
- *    misrepresented as being the original software.
+ * www.apache.org/licenses/LICENSE-2.0
  *
- * 3. This notice may not be removed or altered from any source distribution.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  *
- * $Date:        19. September 2017
- * $Revision:    V2.4
+ * $Date:        23. April 2021
+ * $Revision:    V2.5
  *
  * Driver:       Driver_USBH0
  * Configured:   via RTE_Device.h configuration file
@@ -44,6 +43,8 @@
  * -------------------------------------------------------------------------- */
 
 /* History:
+ *  Version 2.5
+ *    Fixed port resume occasionally getting stuck in resume signaling
  *  Version 2.4
  *    Added support for CMSIS-RTOS2
  *  Version 2.3
@@ -93,7 +94,7 @@ extern bool OTG_FS_PinGetOC        (void);
 
 // USBH Driver *****************************************************************
 
-#define ARM_USBH_DRV_VERSION ARM_DRIVER_VERSION_MAJOR_MINOR(2,4)
+#define ARM_USBH_DRV_VERSION ARM_DRIVER_VERSION_MAJOR_MINOR(2,5)
 
 // Driver Version
 static const ARM_DRIVER_VERSION usbh_driver_version = { ARM_USBH_API_VERSION, ARM_USBH_DRV_VERSION };
@@ -282,7 +283,7 @@ static bool USBH_HW_StartTransfer (PIPE_t *ptr_pipe, OTG_FS_HC *ptr_ch) {
     case ARM_USBH_PACKET_OUT:
       hcchar   &= ~OTG_FS_HCCHARx_EPDIR;
       hcintmsk  = (OTG_FS_HCINTMSKx_TXERRM  |
-//                 OTG_FS_HCINTMSKx_ACKM    |         // After ACK there must be other relevant interrupt so ACK is ignorred
+//                 OTG_FS_HCINTMSKx_ACKM    |         // After ACK there must be other relevant interrupt so ACK is ignored
                    OTG_FS_HCINTMSKx_NAKM    |
                    OTG_FS_HCINTMSKx_STALLM  |
                    OTG_FS_HCINTMSKx_XFRCM)  ;
@@ -629,6 +630,8 @@ static int32_t USBH_PortResume (uint8_t port) {
   if (port != 0U)          { return ARM_DRIVER_ERROR_PARAMETER; }
 
   OTG->HPRT |=  OTG_FS_HPRT_PRES;                       // Port resume
+  osDelay(25U);                                         // Minimum 20 ms
+  OTG->HPRT &= ~OTG_FS_HPRT_PRES;                       // Clear port resume
 
   return ARM_DRIVER_OK;
 }

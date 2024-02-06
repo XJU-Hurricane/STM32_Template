@@ -34,6 +34,6 @@
 #define LED0_TOGGLE() HAL_GPIO_TogglePin(LED0_PORT, LED0_PIN) /* 翻转LED0 */
 #define LED1_TOGGLE() HAL_GPIO_TogglePin(LED1_PORT, LED1_PIN) /* 翻转LED1 */
 
-void LED_Init(void);
+void led_init(void);
 
 #endif /* __LED_H */

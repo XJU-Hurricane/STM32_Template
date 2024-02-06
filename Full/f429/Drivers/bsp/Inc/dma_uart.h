@@ -59,7 +59,7 @@ typedef struct {
     /* 下面的代码按需改动 */
 
     #if USART1_USE_DMA_TX
-void USART1_TX_DMA_Init(uint32_t fifo_size, uint32_t buf_size);
+void usart1_dmatx_init(uint32_t fifo_size, uint32_t buf_size);
     #endif /* USART1_USE_DMA_TX */
 
     #if USART1_USE_DMA_RX
@@ -68,7 +68,7 @@ void USART1_TX_DMA_Init(uint32_t fifo_size, uint32_t buf_size);
         #endif /* !EN_USART1_RX */
 
         #define USART1_USE_IDLE_IT 1 /* 是否启用空闲中断 */
-void USART1_RX_DMA_Init(uint32_t fifo_size, uint32_t buf_size);
+void usart1_dmarx_init(uint32_t fifo_size, uint32_t buf_size);
     #endif /* USART1_USE_DMA_RX */
 
 #endif /* EN_USART1 */
@@ -90,7 +90,7 @@ void USART1_RX_DMA_Init(uint32_t fifo_size, uint32_t buf_size);
     /* 下面的代码按需改动 */
 
     #if USART2_USE_DMA_TX
-void USART2_TX_DMA_Init(uint32_t fifo_size, uint32_t buf_size);
+void usart2_dmatx_init(uint32_t fifo_size, uint32_t buf_size);
     #endif /* USART2_USE_DMA_TX */
 
     #if USART2_USE_DMA_RX
@@ -99,7 +99,7 @@ void USART2_TX_DMA_Init(uint32_t fifo_size, uint32_t buf_size);
         #endif /* !EN_USART2_RX */
 
         #define USART2_USE_IDLE_IT 1 /* 是否启用空闲中断 */
-void USART2_RX_DMA_Init(uint32_t fifo_size, uint32_t buf_size);
+void usart2_dmarx_init(uint32_t fifo_size, uint32_t buf_size);
     #endif /* USART2_USE_DMA_RX */
 
 #endif /* EN_USART2 */
@@ -121,7 +121,7 @@ void USART2_RX_DMA_Init(uint32_t fifo_size, uint32_t buf_size);
     /* 下面的代码按需改动 */
 
     #if USART3_USE_DMA_TX
-void USART3_TX_DMA_Init(uint32_t fifo_size, uint32_t buf_size);
+void usart3_dmatx_init(uint32_t fifo_size, uint32_t buf_size);
     #endif /* USART3_USE_DMA_TX */
 
     #if USART3_USE_DMA_RX
@@ -130,7 +130,7 @@ void USART3_TX_DMA_Init(uint32_t fifo_size, uint32_t buf_size);
         #endif /* !EN_USART3_RX */
 
         #define USART3_USE_IDLE_IT 1 /* 是否启用空闲中断 */
-void USART3_RX_DMA_Init(uint32_t fifo_size, uint32_t buf_size);
+void usart3_dmarx_init(uint32_t fifo_size, uint32_t buf_size);
     #endif /* USART3_USE_DMA_RX */
 
 #endif /* EN_USART3 */
@@ -152,7 +152,7 @@ void USART3_RX_DMA_Init(uint32_t fifo_size, uint32_t buf_size);
     /* 下面的代码按需改动 */
 
     #if UART4_USE_DMA_TX
-void UART4_TX_DMA_Init(uint32_t fifo_size, uint32_t buf_size);
+void uart4_dmatx_init(uint32_t fifo_size, uint32_t buf_size);
     #endif /* UART4_USE_DMA_TX */
 
     #if UART4_USE_DMA_RX
@@ -161,7 +161,7 @@ void UART4_TX_DMA_Init(uint32_t fifo_size, uint32_t buf_size);
         #endif /* !EN_UART4_RX */
 
         #define UART4_USE_IDLE_IT 1 /* 是否启用空闲中断 */
-void UART4_RX_DMA_Init(uint32_t fifo_size, uint32_t buf_size);
+void uart4_dmarx_init(uint32_t fifo_size, uint32_t buf_size);
     #endif /* UART4_USE_DMA_RX */
 
 #endif /* EN_UART4 */
@@ -183,7 +183,7 @@ void UART4_RX_DMA_Init(uint32_t fifo_size, uint32_t buf_size);
     /* 下面的代码按需改动 */
 
     #if UART5_USE_DMA_TX
-void UART5_TX_DMA_Init(uint32_t fifo_size, uint32_t buf_size);
+void uart5_dmatx_init(uint32_t fifo_size, uint32_t buf_size);
     #endif /* UART5_USE_DMA_TX */
 
     #if UART5_USE_DMA_RX
@@ -192,7 +192,7 @@ void UART5_TX_DMA_Init(uint32_t fifo_size, uint32_t buf_size);
         #endif /* !EN_UART5_RX */
 
         #define UART5_USE_IDLE_IT 1 /* 是否启用空闲中断 */
-void UART5_RX_DMA_Init(uint32_t fifo_size, uint32_t buf_size);
+void uart5_dmarx_init(uint32_t fifo_size, uint32_t buf_size);
     #endif /* UART5_USE_DMA_RX */
 
 #endif /* EN_UART5 */
@@ -214,7 +214,7 @@ void UART5_RX_DMA_Init(uint32_t fifo_size, uint32_t buf_size);
     /* 下面的代码按需改动 */
 
     #if USART6_USE_DMA_TX
-void USART6_TX_DMA_Init(uint32_t fifo_size, uint32_t buf_size);
+void usart6_dmatx_init(uint32_t fifo_size, uint32_t buf_size);
     #endif /* USART6_USE_DMA_TX */
 
     #if USART6_USE_DMA_RX
@@ -223,7 +223,7 @@ void USART6_TX_DMA_Init(uint32_t fifo_size, uint32_t buf_size);
         #endif /* !EN_USART6_RX */
 
         #define USART6_USE_IDLE_IT 1 /* 是否启用空闲中断 */
-void USART6_RX_DMA_Init(uint32_t fifo_size, uint32_t buf_size);
+void usart6_dmarx_init(uint32_t fifo_size, uint32_t buf_size);
     #endif /* USART6_USE_DMA_RX */
 
 #endif /* EN_USART6 */
@@ -247,7 +247,7 @@ void USART6_RX_DMA_Init(uint32_t fifo_size, uint32_t buf_size);
         /* 下面的代码按需改动 */
 
         #if UART7_USE_DMA_TX
-void UART7_TX_DMA_Init(uint32_t fifo_size, uint32_t buf_size);
+void uart7_dmatx_init(uint32_t fifo_size, uint32_t buf_size);
         #endif /* UART7_USE_DMA_TX */
 
         #if UART7_USE_DMA_RX
@@ -256,7 +256,7 @@ void UART7_TX_DMA_Init(uint32_t fifo_size, uint32_t buf_size);
             #endif /* !EN_UART7_RX */
 
             #define UART7_USE_IDLE_IT 1 /* 是否启用空闲中断 */
-void UART7_RX_DMA_Init(uint32_t fifo_size, uint32_t buf_size);
+void uart7_dmarx_init(uint32_t fifo_size, uint32_t buf_size);
         #endif /* UART7_USE_DMA_RX */
 
     #endif /* EN_UART7 */
@@ -278,7 +278,7 @@ void UART7_RX_DMA_Init(uint32_t fifo_size, uint32_t buf_size);
         /* 下面的代码按需改动 */
 
         #if UART8_USE_DMA_TX
-void UART8_TX_DMA_Init(uint32_t fifo_size, uint32_t buf_size);
+void uart8_dmatx_init(uint32_t fifo_size, uint32_t buf_size);
         #endif /* UART8_USE_DMA_TX */
 
         #if UART8_USE_DMA_RX
@@ -287,7 +287,7 @@ void UART8_TX_DMA_Init(uint32_t fifo_size, uint32_t buf_size);
             #endif /* !EN_UART8_RX */
 
             #define UART8_USE_IDLE_IT 1 /* 是否启用空闲中断 */
-void UART8_RX_DMA_Init(uint32_t fifo_size, uint32_t buf_size);
+void uart8_dmarx_init(uint32_t fifo_size, uint32_t buf_size);
         #endif /* UART8_USE_DMA_RX */
 
     #endif /* EN_UART8 */
@@ -302,15 +302,15 @@ void UART8_RX_DMA_Init(uint32_t fifo_size, uint32_t buf_size);
  * @defgroup 公共处理函数
  * @{
  */
-void UART_DMATX_Clear_TC_Flag(UART_HandleTypeDef *huart);
-void UART_DMATX_Write(UART_HandleTypeDef *huart, const void *data,
+void uart_dmatx_clear_tc_flag(UART_HandleTypeDef *huart);
+void uart_dmatx_write(UART_HandleTypeDef *huart, const void *data,
                       uint32_t len);
-void UART_DMATX_Send(UART_HandleTypeDef *huart);
+void uart_dmatx_send(UART_HandleTypeDef *huart);
 
-void UART_DMARX_Idle_Callback(UART_HandleTypeDef *huart);
-void UART_DMARX_HalfDone_Callback(UART_HandleTypeDef *huart);
-void UART_DMARX_Done_Callback(UART_HandleTypeDef *huart);
-uint32_t UART_DMARX_Read(UART_HandleTypeDef *huart, void *buf, uint32_t len);
+void uart_dmarx_idle_callback(UART_HandleTypeDef *huart);
+void uart_dmarx_halfdone_callbackk(UART_HandleTypeDef *huart);
+void uart_dmarx_done_callback(UART_HandleTypeDef *huart);
+uint32_t uart_dmarx_read(UART_HandleTypeDef *huart, void *buf, uint32_t len);
 
 /**
  * @}

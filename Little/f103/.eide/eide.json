@@ -280,8 +280,7 @@
         "sourceDirList": [],
         "defineList": [
           "USE_HAL_DRIVER",
-          "STM32F103xE",
-          "STM32F10X_HD"
+          "STM32F103xE"
         ]
       }
     }

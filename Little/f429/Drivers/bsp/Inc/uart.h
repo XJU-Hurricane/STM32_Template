@@ -59,15 +59,15 @@
 
 #ifdef EN_USART1
 /* 句柄 */
-extern UART_HandleTypeDef USART1_Handler;
+extern UART_HandleTypeDef g_usart1_handler;
     /* 接收buf */
     #if EN_USART1_RX
-extern uint8_t USART1_RX_BUF[USART_REC_LEN];
-extern uint16_t USART1_RX_STA;
-extern uint8_t g_usart1_rx_buf[RXBUFFERSIZE];
+extern uint8_t g_usart1_rx_buf[USART_REC_LEN];
+extern uint16_t g_usart1_rx_status;
+extern uint8_t g_usart1_recv_buf[RXBUFFERSIZE];
     #endif /* EN_USART1_RX */
 
-void USART1_Init(uint32_t bound);
+void usart1_init(uint32_t bound);
 #endif /* EN_USART1 */
 
 /**
@@ -81,15 +81,15 @@ void USART1_Init(uint32_t bound);
 
 #ifdef EN_USART2
 /* 句柄 */
-extern UART_HandleTypeDef USART2_Handler;
+extern UART_HandleTypeDef g_usart2_handler;
     /* 接收buf */
     #if EN_USART2_RX
-extern uint8_t USART2_RX_BUF[USART_REC_LEN];
-extern uint16_t USART2_RX_STA;
-extern uint8_t g_usart2_rx_buf[RXBUFFERSIZE];
+extern uint8_t g_usart2_rx_buf[USART_REC_LEN];
+extern uint16_t g_usart2_rx_status;
+extern uint8_t g_usart2_recv_buf[RXBUFFERSIZE];
     #endif /* EN_USART2 */
 
-void USART2_Init(uint32_t bound);
+void usart2_init(uint32_t bound);
 #endif
 
 /**
@@ -103,14 +103,14 @@ void USART2_Init(uint32_t bound);
 
 #ifdef EN_USART3
 /* 句柄 */
-extern UART_HandleTypeDef USART3_Handler;
+extern UART_HandleTypeDef g_usart3_handler;
     /* 接收buf */
     #if EN_USART3_RX
-extern uint8_t USART3_RX_BUF[USART_REC_LEN];
-extern uint16_t USART3_RX_STA;
-extern uint8_t g_usart3_rx_buf[RXBUFFERSIZE];
+extern uint8_t g_usart3_rx_buf[USART_REC_LEN];
+extern uint16_t g_usart3_rx_status;
+extern uint8_t g_usart3_recv_buf[RXBUFFERSIZE];
     #endif
-void USART3_Init(uint32_t bound);
+void usart3_init(uint32_t bound);
 #endif
 
 /**
@@ -127,12 +127,12 @@ void USART3_Init(uint32_t bound);
 extern UART_HandleTypeDef UART4_Handler;
     /* 接收buf */
     #if EN_UART4_RX
-extern uint8_t UART4_RX_BUF[USART_REC_LEN];
-extern uint16_t UART4_RX_STA;
-extern uint8_t g_uart4_rx_buf[RXBUFFERSIZE];
+extern uint8_t g_uart4_rx_buf[USART_REC_LEN];
+extern uint16_t g_uart4_rx_status;
+extern uint8_t g_uart4_recv_buf[RXBUFFERSIZE];
     #endif
 
-void UART4_Init(uint32_t bound);
+void uart4_init(uint32_t bound);
 #endif
 
 /**
@@ -149,12 +149,12 @@ void UART4_Init(uint32_t bound);
 extern UART_HandleTypeDef UART5_Handler;
     /* 接收buf */
     #if EN_UART5_RX
-extern uint8_t UART5_RX_BUF[USART_REC_LEN];
-extern uint16_t UART5_RX_STA;
-extern uint8_t g_uart5_rx_buf[RXBUFFERSIZE];
+extern uint8_t g_uart5_rx_buf[USART_REC_LEN];
+extern uint16_t g_uart5_rx_status;
+extern uint8_t g_uart5_recv_buf[RXBUFFERSIZE];
     #endif
 
-void UART5_Init(uint32_t bound);
+void uart5_init(uint32_t bound);
 #endif
 
 /**
@@ -168,15 +168,15 @@ void UART5_Init(uint32_t bound);
 
 #ifdef EN_USART6
 /* 句柄 */
-extern UART_HandleTypeDef USART6_Handler;
+extern UART_HandleTypeDef g_usart6_handler;
     /* 接收buf */
     #if EN_USART6_RX
-extern uint8_t USART6_RX_BUF[USART_REC_LEN];
-extern uint16_t USART6_RX_STA;
-extern uint8_t g_usart6_rx_buf[RXBUFFERSIZE];
+extern uint8_t g_usart6_rx_buf[USART_REC_LEN];
+extern uint16_t g_usart6_rx_status;
+extern uint8_t g_usart6_recv_buf[RXBUFFERSIZE];
     #endif
 
-void USART6_Init(uint32_t bound);
+void usart6_init(uint32_t bound);
 #endif
 
 /**
@@ -193,12 +193,12 @@ void USART6_Init(uint32_t bound);
 extern UART_HandleTypeDef UART7_Handler;
     /* 接收buf */
     #if EN_UART7_RX
-extern uint8_t UART7_RX_BUF[USART_REC_LEN];
-extern uint16_t UART7_RX_STA;
-extern uint8_t g_uart7_rx_buf[RXBUFFERSIZE];
+extern uint8_t g_uart7_rx_buf[USART_REC_LEN];
+extern uint16_t g_uart7_rx_status;
+extern uint8_t g_uart7_recv_buf[RXBUFFERSIZE];
     #endif /* EN_UART7_RX */
 
-void UART7_Init(uint32_t bound);
+void uart7_init(uint32_t bound);
 #endif /* EN_UART7 */
 
 /**
@@ -215,12 +215,12 @@ void UART7_Init(uint32_t bound);
 extern UART_HandleTypeDef UART8_Handler;
     /* 接收buf */
     #if EN_UART8_RX
-extern uint8_t UART8_RX_BUF[USART_REC_LEN];
-extern uint16_t UART8_RX_STA;
-extern uint8_t g_uart8_rx_buf[RXBUFFERSIZE];
+extern uint8_t g_uart8_rx_buf[USART_REC_LEN];
+extern uint16_t g_uart8_rx_status;
+extern uint8_t g_uart8_recv_buf[RXBUFFERSIZE];
     #endif /* EN_UART8_RX */
 
-void UART8_Init(uint32_t bound);
+void uart8_init(uint32_t bound);
 #endif /* EN_UART8 */
 
 /**

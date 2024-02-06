@@ -43,7 +43,7 @@
 #define KEY2_PRES     3
 #define WKUP_PRES     4
 
-void KEY_Init(void);
-uint8_t KEY_Scan(uint8_t mode);
+void key_init(void);
+uint8_t key_scan(uint8_t mode);
 
 #endif /* __KEY_H */

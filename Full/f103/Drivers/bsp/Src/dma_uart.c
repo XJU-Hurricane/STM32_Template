@@ -20,7 +20,7 @@
 
     #if USART1_USE_DMA_TX
 
-static DMA_HandleTypeDef USART1_DMA_TX_Handler = {0};
+static DMA_HandleTypeDef g_usart1_dmatx_handler = {0};
 /* FIFO+BUF, 双缓冲 */
 static uart_tx_fifo_t g_usart1_tx_fifo = {0};
 static uint8_t *g_usart1_send_buf;
@@ -32,7 +32,7 @@ static uint8_t *g_usart1_send_buf;
  * @param buf_size 接收缓冲区大小
  * @warning `fifo_size`必须是2的幂次方
  */
-void USART1_TX_DMA_Init(uint32_t fifo_size, uint32_t buf_size) {
+void usart1_dmatx_init(uint32_t fifo_size, uint32_t buf_size) {
     g_usart1_send_buf = (uint8_t *)malloc((sizeof(uint8_t)) * buf_size);
     g_usart1_tx_fifo.send_buf = g_usart1_send_buf;
     g_usart1_tx_fifo.send_buf_size = buf_size;
@@ -49,18 +49,18 @@ void USART1_TX_DMA_Init(uint32_t fifo_size, uint32_t buf_size) {
     }
 
     __HAL_RCC_DMA1_CLK_ENABLE();
-    USART1_DMA_TX_Handler.Instance = DMA1_Channel4;
-    USART1_DMA_TX_Handler.Init.Direction =
+    g_usart1_dmatx_handler.Instance = DMA1_Channel4;
+    g_usart1_dmatx_handler.Init.Direction =
         DMA_MEMORY_TO_PERIPH; /* 发送, 内存到外设 */
-    USART1_DMA_TX_Handler.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
-    USART1_DMA_TX_Handler.Init.MemInc = DMA_MINC_ENABLE;
-    USART1_DMA_TX_Handler.Init.Mode = DMA_NORMAL;
-    USART1_DMA_TX_Handler.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
-    USART1_DMA_TX_Handler.Init.PeriphInc = DMA_PINC_DISABLE;
-    USART1_DMA_TX_Handler.Init.Priority = DMA_PRIORITY_LOW;
+    g_usart1_dmatx_handler.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
+    g_usart1_dmatx_handler.Init.MemInc = DMA_MINC_ENABLE;
+    g_usart1_dmatx_handler.Init.Mode = DMA_NORMAL;
+    g_usart1_dmatx_handler.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
+    g_usart1_dmatx_handler.Init.PeriphInc = DMA_PINC_DISABLE;
+    g_usart1_dmatx_handler.Init.Priority = DMA_PRIORITY_LOW;
 
-    HAL_DMA_Init(&USART1_DMA_TX_Handler);
-    __HAL_LINKDMA(&USART1_Handler, hdmatx, USART1_DMA_TX_Handler);
+    HAL_DMA_Init(&g_usart1_dmatx_handler);
+    __HAL_LINKDMA(&g_usart1_handler, hdmatx, g_usart1_dmatx_handler);
 
     HAL_NVIC_SetPriority(DMA1_Channel4_IRQn, 0, 1);
     HAL_NVIC_EnableIRQ(DMA1_Channel4_IRQn);
@@ -71,13 +71,13 @@ void USART1_TX_DMA_Init(uint32_t fifo_size, uint32_t buf_size) {
  *
  */
 void DMA1_Channel4_IRQHandler(void) {
-    HAL_DMA_IRQHandler(&USART1_DMA_TX_Handler);
+    HAL_DMA_IRQHandler(&g_usart1_dmatx_handler);
 }
     #endif /* USART1_USE_DMA_TX */
 
     #if USART1_USE_DMA_RX
 
-static DMA_HandleTypeDef USART1_DMA_RX_Handler = {0};
+static DMA_HandleTypeDef g_usart1_dmarx_handler = {0};
 /* FIFO+BUF, 双缓冲 */
 static uart_rx_fifo_t g_usart1_rx_fifo = {0};
 static uint8_t *g_usart1_recv_buf;
@@ -88,7 +88,7 @@ static uint8_t *g_usart1_recv_buf;
  * @param fifo_size FIFO大小
  * @param buf_size 缓冲区大小
  */
-void USART1_RX_DMA_Init(uint32_t fifo_size, uint32_t buf_size) {
+void usart1_dmarx_init(uint32_t fifo_size, uint32_t buf_size) {
     g_usart1_recv_buf = (uint8_t *)malloc((sizeof(uint8_t)) * (buf_size));
     g_usart1_rx_fifo.head_ptr = 0;
     g_usart1_rx_fifo.rx_fifo_buf =
@@ -103,27 +103,27 @@ void USART1_RX_DMA_Init(uint32_t fifo_size, uint32_t buf_size) {
     }
     __HAL_RCC_DMA1_CLK_ENABLE();
 
-    USART1_DMA_RX_Handler.Instance = DMA1_Channel5;
-    USART1_DMA_RX_Handler.Init.Direction =
+    g_usart1_dmarx_handler.Instance = DMA1_Channel5;
+    g_usart1_dmarx_handler.Init.Direction =
         DMA_PERIPH_TO_MEMORY; /* 接收, 外设到内存 */
-    USART1_DMA_RX_Handler.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
-    USART1_DMA_RX_Handler.Init.MemInc = DMA_MINC_ENABLE;
-    USART1_DMA_RX_Handler.Init.Mode = DMA_CIRCULAR;
-    USART1_DMA_RX_Handler.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
-    USART1_DMA_RX_Handler.Init.PeriphInc = DMA_PINC_DISABLE;
-    USART1_DMA_RX_Handler.Init.Priority = DMA_PRIORITY_HIGH;
+    g_usart1_dmarx_handler.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
+    g_usart1_dmarx_handler.Init.MemInc = DMA_MINC_ENABLE;
+    g_usart1_dmarx_handler.Init.Mode = DMA_CIRCULAR;
+    g_usart1_dmarx_handler.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
+    g_usart1_dmarx_handler.Init.PeriphInc = DMA_PINC_DISABLE;
+    g_usart1_dmarx_handler.Init.Priority = DMA_PRIORITY_HIGH;
 
-    HAL_DMA_Init(&USART1_DMA_RX_Handler);
-    __HAL_LINKDMA(&USART1_Handler, hdmarx, USART1_DMA_RX_Handler);
+    HAL_DMA_Init(&g_usart1_dmarx_handler);
+    __HAL_LINKDMA(&g_usart1_handler, hdmarx, g_usart1_dmarx_handler);
 
     HAL_NVIC_SetPriority(DMA1_Channel5_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(DMA1_Channel5_IRQn);
 
         #if USART1_USE_IDLE_IT
-    __HAL_UART_ENABLE_IT(&USART1_Handler, UART_IT_IDLE);
-    __HAL_UART_CLEAR_IDLEFLAG(&USART1_Handler);
+    __HAL_UART_ENABLE_IT(&g_usart1_handler, UART_IT_IDLE);
+    __HAL_UART_CLEAR_IDLEFLAG(&g_usart1_handler);
         #endif /* USART1_USE_IDLE_IT */
-    HAL_UART_Receive_DMA(&USART1_Handler, (uint8_t *)g_usart1_recv_buf,
+    HAL_UART_Receive_DMA(&g_usart1_handler, (uint8_t *)g_usart1_recv_buf,
                          buf_size);
 }
 
@@ -132,7 +132,7 @@ void USART1_RX_DMA_Init(uint32_t fifo_size, uint32_t buf_size) {
  *
  */
 void DMA1_Channel5_IRQHandler(void) {
-    HAL_DMA_IRQHandler(&USART1_DMA_RX_Handler);
+    HAL_DMA_IRQHandler(&g_usart1_dmarx_handler);
 }
     #endif /* USART1_USE_DMA_RX */
 
@@ -150,7 +150,7 @@ void DMA1_Channel5_IRQHandler(void) {
 
     #if USART2_USE_DMA_TX
 
-static DMA_HandleTypeDef USART2_DMA_TX_Handler = {0};
+static DMA_HandleTypeDef g_usart2_dmatx_handler = {0};
 /* FIFO+BUF, 双缓冲 */
 static uart_tx_fifo_t g_usart2_tx_fifo = {0};
 static uint8_t *g_usart2_send_buf;
@@ -162,7 +162,7 @@ static uint8_t *g_usart2_send_buf;
  * @param buf_size 接收缓冲区大小
  * @warning `fifo_size`必须是2的幂次方
  */
-void USART2_TX_DMA_Init(uint32_t fifo_size, uint32_t buf_size) {
+void usart2_dmatx_init(uint32_t fifo_size, uint32_t buf_size) {
     g_usart2_send_buf = (uint8_t *)malloc((sizeof(uint8_t)) * buf_size);
     g_usart2_tx_fifo.send_buf = g_usart2_send_buf;
     g_usart2_tx_fifo.send_buf_size = buf_size;
@@ -179,18 +179,18 @@ void USART2_TX_DMA_Init(uint32_t fifo_size, uint32_t buf_size) {
     }
 
     __HAL_RCC_DMA1_CLK_ENABLE();
-    USART2_DMA_TX_Handler.Instance = DMA1_Channel7;
-    USART2_DMA_TX_Handler.Init.Direction =
+    g_usart2_dmatx_handler.Instance = DMA1_Channel7;
+    g_usart2_dmatx_handler.Init.Direction =
         DMA_MEMORY_TO_PERIPH; /* 发送, 内存到外设 */
-    USART2_DMA_TX_Handler.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
-    USART2_DMA_TX_Handler.Init.MemInc = DMA_MINC_ENABLE;
-    USART2_DMA_TX_Handler.Init.Mode = DMA_NORMAL;
-    USART2_DMA_TX_Handler.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
-    USART2_DMA_TX_Handler.Init.PeriphInc = DMA_PINC_DISABLE;
-    USART2_DMA_TX_Handler.Init.Priority = DMA_PRIORITY_LOW;
+    g_usart2_dmatx_handler.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
+    g_usart2_dmatx_handler.Init.MemInc = DMA_MINC_ENABLE;
+    g_usart2_dmatx_handler.Init.Mode = DMA_NORMAL;
+    g_usart2_dmatx_handler.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
+    g_usart2_dmatx_handler.Init.PeriphInc = DMA_PINC_DISABLE;
+    g_usart2_dmatx_handler.Init.Priority = DMA_PRIORITY_LOW;
 
-    HAL_DMA_Init(&USART2_DMA_TX_Handler);
-    __HAL_LINKDMA(&USART2_Handler, hdmatx, USART2_DMA_TX_Handler);
+    HAL_DMA_Init(&g_usart2_dmatx_handler);
+    __HAL_LINKDMA(&g_usart2_handler, hdmatx, g_usart2_dmatx_handler);
 
     HAL_NVIC_SetPriority(DMA1_Channel7_IRQn, 0, 1);
     HAL_NVIC_EnableIRQ(DMA1_Channel7_IRQn);
@@ -201,13 +201,13 @@ void USART2_TX_DMA_Init(uint32_t fifo_size, uint32_t buf_size) {
  *
  */
 void DMA1_Channel7_IRQHandler(void) {
-    HAL_DMA_IRQHandler(&USART2_DMA_TX_Handler);
+    HAL_DMA_IRQHandler(&g_usart2_dmatx_handler);
 }
     #endif /* USART2_USE_DMA_TX */
 
     #if USART2_USE_DMA_RX
 
-static DMA_HandleTypeDef USART2_DMA_RX_Handler = {0};
+static DMA_HandleTypeDef g_usart2_dmarx_handler = {0};
 /* FIFO+BUF, 双缓冲 */
 static uart_rx_fifo_t g_usart2_rx_fifo = {0};
 static uint8_t *g_usart2_recv_buf;
@@ -218,7 +218,7 @@ static uint8_t *g_usart2_recv_buf;
  * @param fifo_size 接收FIFO大小
  * @param buf_size 接收缓冲区大小
  */
-void USART2_RX_DMA_Init(uint32_t fifo_size, uint32_t buf_size) {
+void usart2_dmarx_init(uint32_t fifo_size, uint32_t buf_size) {
     g_usart2_recv_buf = (uint8_t *)malloc((sizeof(uint8_t)) * (buf_size));
     g_usart2_rx_fifo.head_ptr = 0;
     g_usart2_rx_fifo.rx_fifo_buf =
@@ -233,27 +233,27 @@ void USART2_RX_DMA_Init(uint32_t fifo_size, uint32_t buf_size) {
     }
     __HAL_RCC_DMA1_CLK_ENABLE();
 
-    USART2_DMA_RX_Handler.Instance = DMA1_Channel6;
-    USART2_DMA_RX_Handler.Init.Direction =
+    g_usart2_dmarx_handler.Instance = DMA1_Channel6;
+    g_usart2_dmarx_handler.Init.Direction =
         DMA_PERIPH_TO_MEMORY; /* 接收, 外设到内存 */
-    USART2_DMA_RX_Handler.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
-    USART2_DMA_RX_Handler.Init.MemInc = DMA_MINC_ENABLE;
-    USART2_DMA_RX_Handler.Init.Mode = DMA_CIRCULAR;
-    USART2_DMA_RX_Handler.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
-    USART2_DMA_RX_Handler.Init.PeriphInc = DMA_PINC_DISABLE;
-    USART2_DMA_RX_Handler.Init.Priority = DMA_PRIORITY_HIGH;
+    g_usart2_dmarx_handler.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
+    g_usart2_dmarx_handler.Init.MemInc = DMA_MINC_ENABLE;
+    g_usart2_dmarx_handler.Init.Mode = DMA_CIRCULAR;
+    g_usart2_dmarx_handler.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
+    g_usart2_dmarx_handler.Init.PeriphInc = DMA_PINC_DISABLE;
+    g_usart2_dmarx_handler.Init.Priority = DMA_PRIORITY_HIGH;
 
-    HAL_DMA_Init(&USART2_DMA_RX_Handler);
-    __HAL_LINKDMA(&USART2_Handler, hdmarx, USART2_DMA_RX_Handler);
+    HAL_DMA_Init(&g_usart2_dmarx_handler);
+    __HAL_LINKDMA(&g_usart2_handler, hdmarx, g_usart2_dmarx_handler);
 
     HAL_NVIC_SetPriority(DMA1_Channel6_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(DMA1_Channel6_IRQn);
 
         #if USART2_USE_IDLE_IT
-    __HAL_UART_ENABLE_IT(&USART2_Handler, UART_IT_IDLE);
-    __HAL_UART_CLEAR_IDLEFLAG(&USART2_Handler);
+    __HAL_UART_ENABLE_IT(&g_usart2_handler, UART_IT_IDLE);
+    __HAL_UART_CLEAR_IDLEFLAG(&g_usart2_handler);
         #endif /* USART2_USE_IDLE_IT */
-    HAL_UART_Receive_DMA(&USART2_Handler, (uint8_t *)g_usart2_recv_buf,
+    HAL_UART_Receive_DMA(&g_usart2_handler, (uint8_t *)g_usart2_recv_buf,
                          buf_size);
 }
 
@@ -262,7 +262,7 @@ void USART2_RX_DMA_Init(uint32_t fifo_size, uint32_t buf_size) {
  *
  */
 void DMA1_Channel6_IRQHandler(void) {
-    HAL_DMA_IRQHandler(&USART2_DMA_RX_Handler);
+    HAL_DMA_IRQHandler(&g_usart2_dmarx_handler);
 }
     #endif /* USART2_USE_DMA_RX */
 
@@ -281,10 +281,11 @@ void DMA1_Channel6_IRQHandler(void) {
 
     #if USART3_USE_DMA_TX
 
-static DMA_HandleTypeDef USART3_DMA_TX_Handler = {0};
+static DMA_HandleTypeDef g_usart3_dmatx_handler = {0};
 /* FIFO+BUF, 双缓冲 */
 static uart_tx_fifo_t g_usart3_tx_fifo = {0};
 static uint8_t *g_usart3_send_buf;
+
 /**
  * @brief 串口3发送DMA初始化
  *
@@ -292,7 +293,7 @@ static uint8_t *g_usart3_send_buf;
  * @param buf_size 接收缓冲区大小
  * @warning `fifo_size`必须是2的幂次方
  */
-void USART3_TX_DMA_Init(uint32_t fifo_size, uint32_t buf_size) {
+void usart3_dmatx_init(uint32_t fifo_size, uint32_t buf_size) {
     g_usart3_send_buf = (uint8_t *)malloc((sizeof(uint8_t)) * buf_size);
     g_usart3_tx_fifo.send_buf = g_usart3_send_buf;
     g_usart3_tx_fifo.send_buf_size = buf_size;
@@ -309,18 +310,18 @@ void USART3_TX_DMA_Init(uint32_t fifo_size, uint32_t buf_size) {
     }
 
     __HAL_RCC_DMA1_CLK_ENABLE();
-    USART3_DMA_TX_Handler.Instance = DMA1_Channel2;
-    USART3_DMA_TX_Handler.Init.Direction =
+    g_usart3_dmatx_handler.Instance = DMA1_Channel2;
+    g_usart3_dmatx_handler.Init.Direction =
         DMA_MEMORY_TO_PERIPH; /* 发送, 内存到外设 */
-    USART3_DMA_TX_Handler.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
-    USART3_DMA_TX_Handler.Init.MemInc = DMA_MINC_ENABLE;
-    USART3_DMA_TX_Handler.Init.Mode = DMA_NORMAL;
-    USART3_DMA_TX_Handler.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
-    USART3_DMA_TX_Handler.Init.PeriphInc = DMA_PINC_DISABLE;
-    USART3_DMA_TX_Handler.Init.Priority = DMA_PRIORITY_LOW;
+    g_usart3_dmatx_handler.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
+    g_usart3_dmatx_handler.Init.MemInc = DMA_MINC_ENABLE;
+    g_usart3_dmatx_handler.Init.Mode = DMA_NORMAL;
+    g_usart3_dmatx_handler.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
+    g_usart3_dmatx_handler.Init.PeriphInc = DMA_PINC_DISABLE;
+    g_usart3_dmatx_handler.Init.Priority = DMA_PRIORITY_LOW;
 
-    HAL_DMA_Init(&USART3_DMA_TX_Handler);
-    __HAL_LINKDMA(&USART3_Handler, hdmatx, USART3_DMA_TX_Handler);
+    HAL_DMA_Init(&g_usart3_dmatx_handler);
+    __HAL_LINKDMA(&g_usart3_handler, hdmatx, g_usart3_dmatx_handler);
 
     HAL_NVIC_SetPriority(DMA1_Channel2_IRQn, 0, 1);
     HAL_NVIC_EnableIRQ(DMA1_Channel2_IRQn);
@@ -331,13 +332,13 @@ void USART3_TX_DMA_Init(uint32_t fifo_size, uint32_t buf_size) {
  *
  */
 void DMA1_Channel2_IRQHandler(void) {
-    HAL_DMA_IRQHandler(&USART3_DMA_TX_Handler);
+    HAL_DMA_IRQHandler(&g_usart3_dmatx_handler);
 }
     #endif /* USART3_USE_DMA_TX */
 
     #if USART3_USE_DMA_RX
 
-static DMA_HandleTypeDef USART3_DMA_RX_Handler = {0};
+static DMA_HandleTypeDef g_usart3_dmarx_handler = {0};
 /* FIFO+BUF, 双缓冲 */
 static uart_rx_fifo_t g_usart3_rx_fifo = {0};
 static uint8_t *g_usart3_recv_buf;
@@ -348,7 +349,7 @@ static uint8_t *g_usart3_recv_buf;
  * @param fifo_size 接收FIFO大小
  * @param buf_size 接收缓冲区大小
  */
-void USART3_RX_DMA_Init(uint32_t fifo_size, uint32_t buf_size) {
+void usart3_dmarx_init(uint32_t fifo_size, uint32_t buf_size) {
     g_usart3_recv_buf = (uint8_t *)malloc((sizeof(uint8_t)) * (buf_size));
     g_usart3_rx_fifo.head_ptr = 0;
     g_usart3_rx_fifo.rx_fifo_buf =
@@ -363,35 +364,36 @@ void USART3_RX_DMA_Init(uint32_t fifo_size, uint32_t buf_size) {
     }
     __HAL_RCC_DMA1_CLK_ENABLE();
 
-    USART3_DMA_RX_Handler.Instance = DMA1_Channel3;
-    USART3_DMA_RX_Handler.Init.Direction =
+    g_usart3_dmarx_handler.Instance = DMA1_Channel3;
+    g_usart3_dmarx_handler.Init.Direction =
         DMA_PERIPH_TO_MEMORY; /* 接收, 外设到内存 */
-    USART3_DMA_RX_Handler.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
-    USART3_DMA_RX_Handler.Init.MemInc = DMA_MINC_ENABLE;
-    USART3_DMA_RX_Handler.Init.Mode = DMA_CIRCULAR;
-    USART3_DMA_RX_Handler.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
-    USART3_DMA_RX_Handler.Init.PeriphInc = DMA_PINC_DISABLE;
-    USART3_DMA_RX_Handler.Init.Priority = DMA_PRIORITY_HIGH;
+    g_usart3_dmarx_handler.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
+    g_usart3_dmarx_handler.Init.MemInc = DMA_MINC_ENABLE;
+    g_usart3_dmarx_handler.Init.Mode = DMA_CIRCULAR;
+    g_usart3_dmarx_handler.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
+    g_usart3_dmarx_handler.Init.PeriphInc = DMA_PINC_DISABLE;
+    g_usart3_dmarx_handler.Init.Priority = DMA_PRIORITY_HIGH;
 
-    HAL_DMA_Init(&USART3_DMA_RX_Handler);
-    __HAL_LINKDMA(&USART3_Handler, hdmarx, USART3_DMA_RX_Handler);
+    HAL_DMA_Init(&g_usart3_dmarx_handler);
+    __HAL_LINKDMA(&g_usart3_handler, hdmarx, g_usart3_dmarx_handler);
 
     HAL_NVIC_SetPriority(DMA1_Channel3_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(DMA1_Channel3_IRQn);
 
         #if USART3_USE_IDLE_IT
-    __HAL_UART_ENABLE_IT(&USART3_Handler, UART_IT_IDLE);
-    __HAL_UART_CLEAR_IDLEFLAG(&USART3_Handler);
+    __HAL_UART_ENABLE_IT(&g_usart3_handler, UART_IT_IDLE);
+    __HAL_UART_CLEAR_IDLEFLAG(&g_usart3_handler);
         #endif /* USART3_USE_IDLE_IT */
-    HAL_UART_Receive_DMA(&USART3_Handler, (uint8_t *)g_usart3_recv_buf,
+    HAL_UART_Receive_DMA(&g_usart3_handler, (uint8_t *)g_usart3_recv_buf,
                          buf_size);
 }
+
 /**
  * @brief 串口3接收中断句柄
  *
  */
 void DMA1_Channel3_IRQHandler(void) {
-    HAL_DMA_IRQHandler(&USART3_DMA_RX_Handler);
+    HAL_DMA_IRQHandler(&g_usart3_dmarx_handler);
 }
     #endif /* USART3_USE_DMA_RX */
 
@@ -410,7 +412,7 @@ void DMA1_Channel3_IRQHandler(void) {
 
     #if UART4_USE_DMA_TX
 
-static DMA_HandleTypeDef UART4_DMA_TX_Handler = {0};
+static DMA_HandleTypeDef g_uart4_dmatx_handler = {0};
 /* FIFO+BUF, 双缓冲 */
 static uart_tx_fifo_t g_uart4_tx_fifo = {0};
 static uint8_t *g_uart4_send_buf;
@@ -421,7 +423,7 @@ static uint8_t *g_uart4_send_buf;
  * @param buf_size 接收缓冲区大小
  * @warning `fifo_size`必须是2的幂次方
  */
-void UART4_TX_DMA_Init(uint32_t fifo_size, uint32_t buf_size) {
+void uart4_dmatx_init(uint32_t fifo_size, uint32_t buf_size) {
     g_uart4_send_buf = (uint8_t *)malloc((sizeof(uint8_t)) * buf_size);
     g_uart4_tx_fifo.send_buf = g_uart4_send_buf;
     g_uart4_tx_fifo.send_buf_size = buf_size;
@@ -438,34 +440,35 @@ void UART4_TX_DMA_Init(uint32_t fifo_size, uint32_t buf_size) {
     }
 
     __HAL_RCC_DMA2_CLK_ENABLE();
-    UART4_DMA_TX_Handler.Instance = DMA2_Channel5;
-    UART4_DMA_TX_Handler.Init.Direction =
+    g_uart4_dmatx_handler.Instance = DMA2_Channel5;
+    g_uart4_dmatx_handler.Init.Direction =
         DMA_MEMORY_TO_PERIPH; /* 发送, 内存到外设 */
-    UART4_DMA_TX_Handler.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
-    UART4_DMA_TX_Handler.Init.MemInc = DMA_MINC_ENABLE;
-    UART4_DMA_TX_Handler.Init.Mode = DMA_NORMAL;
-    UART4_DMA_TX_Handler.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
-    UART4_DMA_TX_Handler.Init.PeriphInc = DMA_PINC_DISABLE;
-    UART4_DMA_TX_Handler.Init.Priority = DMA_PRIORITY_LOW;
+    g_uart4_dmatx_handler.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
+    g_uart4_dmatx_handler.Init.MemInc = DMA_MINC_ENABLE;
+    g_uart4_dmatx_handler.Init.Mode = DMA_NORMAL;
+    g_uart4_dmatx_handler.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
+    g_uart4_dmatx_handler.Init.PeriphInc = DMA_PINC_DISABLE;
+    g_uart4_dmatx_handler.Init.Priority = DMA_PRIORITY_LOW;
 
-    HAL_DMA_Init(&UART4_DMA_TX_Handler);
-    __HAL_LINKDMA(&UART4_Handler, hdmatx, UART4_DMA_TX_Handler);
+    HAL_DMA_Init(&g_uart4_dmatx_handler);
+    __HAL_LINKDMA(&UART4_Handler, hdmatx, g_uart4_dmatx_handler);
 
     HAL_NVIC_SetPriority(DMA2_Channel4_5_IRQn, 0, 1);
     HAL_NVIC_EnableIRQ(DMA2_Channel4_5_IRQn);
 }
+
 /**
  * @brief 串口4发送中断句柄
  *
  */
 void DMA2_Channel4_5_IRQHandler(void) {
-    HAL_DMA_IRQHandler(&UART4_DMA_TX_Handler);
+    HAL_DMA_IRQHandler(&g_uart4_dmatx_handler);
 }
     #endif /* UART4_USE_DMA_TX */
 
     #if UART4_USE_DMA_RX
 
-static DMA_HandleTypeDef UART4_DMA_RX_Handler = {0};
+static DMA_HandleTypeDef g_uart4_dmarx_handler = {0};
 /* FIFO+BUF, 双缓冲 */
 static uart_rx_fifo_t g_uart4_rx_fifo = {0};
 static uint8_t *g_uart4_recv_buf;
@@ -476,7 +479,7 @@ static uint8_t *g_uart4_recv_buf;
  * @param fifo_size 接收FIFO大小
  * @param buf_size 接收缓冲区大小
  */
-void UART4_RX_DMA_Init(uint32_t fifo_size, uint32_t buf_size) {
+void uart4_dmarx_init(uint32_t fifo_size, uint32_t buf_size) {
     g_uart4_recv_buf = (uint8_t *)malloc((sizeof(uint8_t)) * (buf_size));
     g_uart4_rx_fifo.head_ptr = 0;
     g_uart4_rx_fifo.rx_fifo_buf =
@@ -491,18 +494,18 @@ void UART4_RX_DMA_Init(uint32_t fifo_size, uint32_t buf_size) {
     }
     __HAL_RCC_DMA2_CLK_ENABLE();
 
-    UART4_DMA_RX_Handler.Instance = DMA2_Channel3;
-    UART4_DMA_RX_Handler.Init.Direction =
+    g_uart4_dmarx_handler.Instance = DMA2_Channel3;
+    g_uart4_dmarx_handler.Init.Direction =
         DMA_PERIPH_TO_MEMORY; /* 接收, 外设到内存 */
-    UART4_DMA_RX_Handler.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
-    UART4_DMA_RX_Handler.Init.MemInc = DMA_MINC_ENABLE;
-    UART4_DMA_RX_Handler.Init.Mode = DMA_CIRCULAR;
-    UART4_DMA_RX_Handler.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
-    UART4_DMA_RX_Handler.Init.PeriphInc = DMA_PINC_DISABLE;
-    UART4_DMA_RX_Handler.Init.Priority = DMA_PRIORITY_HIGH;
+    g_uart4_dmarx_handler.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
+    g_uart4_dmarx_handler.Init.MemInc = DMA_MINC_ENABLE;
+    g_uart4_dmarx_handler.Init.Mode = DMA_CIRCULAR;
+    g_uart4_dmarx_handler.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
+    g_uart4_dmarx_handler.Init.PeriphInc = DMA_PINC_DISABLE;
+    g_uart4_dmarx_handler.Init.Priority = DMA_PRIORITY_HIGH;
 
-    HAL_DMA_Init(&UART4_DMA_RX_Handler);
-    __HAL_LINKDMA(&UART4_Handler, hdmarx, UART4_DMA_RX_Handler);
+    HAL_DMA_Init(&g_uart4_dmarx_handler);
+    __HAL_LINKDMA(&UART4_Handler, hdmarx, g_uart4_dmarx_handler);
 
     HAL_NVIC_SetPriority(DMA2_Channel3_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(DMA2_Channel3_IRQn);
@@ -519,7 +522,7 @@ void UART4_RX_DMA_Init(uint32_t fifo_size, uint32_t buf_size) {
  *
  */
 void DMA2_Channel3_IRQHandler(void) {
-    HAL_DMA_IRQHandler(&UART4_DMA_RX_Handler);
+    HAL_DMA_IRQHandler(&g_uart4_dmarx_handler);
 }
     #endif /* UART4_USE_DMA_RX */
 
@@ -578,7 +581,7 @@ static inline uart_tx_fifo_t *UART_TX_Identify(UART_HandleTypeDef *huart) {
  *
  * @param huart 串口句柄
  */
-void UART_DMATX_Clear_TC_Flag(UART_HandleTypeDef *huart) {
+void uart_dmatx_clear_tc_flag(UART_HandleTypeDef *huart) {
     uart_tx_fifo_t *tx_fifo = UART_TX_Identify(huart);
 
     if (tx_fifo == NULL) {
@@ -595,7 +598,7 @@ void UART_DMATX_Clear_TC_Flag(UART_HandleTypeDef *huart) {
  * @param data 数据
  * @param len 数据长度
  */
-void UART_DMATX_Write(UART_HandleTypeDef *huart, const void *data,
+void uart_dmatx_write(UART_HandleTypeDef *huart, const void *data,
                       uint32_t len) {
     if ((data == NULL) || (len == 0)) {
         return;
@@ -619,7 +622,7 @@ void UART_DMATX_Write(UART_HandleTypeDef *huart, const void *data,
  * @param huart 串口句柄
  * @note 先使用`UART_DMARX_FIFO_Write`写入数据
  */
-void UART_DMATX_Send(UART_HandleTypeDef *huart) {
+void uart_dmatx_send(UART_HandleTypeDef *huart) {
     uart_tx_fifo_t *send_tx_fifo = UART_TX_Identify(huart);
 
     if (send_tx_fifo == NULL) {
@@ -697,11 +700,17 @@ static inline uart_rx_fifo_t *UART_RX_Identify(UART_HandleTypeDef *huart) {
  *
  * @param huart 串口句柄
  */
-void UART_DMARX_Idle_Callback(UART_HandleTypeDef *huart) {
+void uart_dmarx_idle_callback(UART_HandleTypeDef *huart) {
+    uart_rx_fifo_t *uart_rx_fifo = UART_RX_Identify(huart);
+
+    if (uart_rx_fifo == NULL) {
+        return;
+    }
+
     uint32_t tail_ptr;
     uint32_t copy, offset;
 
-    /*
+    /**
      * +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
      * |     head_ptr          tail_ptr         |
      * |         |                 |            |
@@ -712,12 +721,6 @@ void UART_DMARX_Idle_Callback(UART_HandleTypeDef *huart) {
 
     /* 已接收 */
     tail_ptr = huart->RxXferSize - __HAL_DMA_GET_COUNTER(huart->hdmarx);
-
-    uart_rx_fifo_t *uart_rx_fifo = UART_RX_Identify(huart);
-
-    if (uart_rx_fifo == NULL) {
-        return;
-    }
 
     offset = (uart_rx_fifo->head_ptr) % (uint32_t)(huart->RxXferSize);
     copy = tail_ptr - offset;
@@ -731,11 +734,17 @@ void UART_DMARX_Idle_Callback(UART_HandleTypeDef *huart) {
  *
  * @param huart 串口句柄
  */
-void UART_DMARX_HalfDone_Callback(UART_HandleTypeDef *huart) {
+void uart_dmarx_halfdone_callbackk(UART_HandleTypeDef *huart) {
+    uart_rx_fifo_t *uart_rx_fifo = UART_RX_Identify(huart);
+
+    if (uart_rx_fifo == NULL) {
+        return;
+    }
+
     uint32_t tail_ptr;
     uint32_t offset, copy;
 
-    /*
+    /**
      * +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
      * |                  half                  |
      * |     head_ptr   tail_ptr                |
@@ -746,12 +755,6 @@ void UART_DMARX_HalfDone_Callback(UART_HandleTypeDef *huart) {
      */
 
     tail_ptr = (huart->RxXferSize >> 1) + (huart->RxXferSize & 1);
-
-    uart_rx_fifo_t *uart_rx_fifo = UART_RX_Identify(huart);
-
-    if (uart_rx_fifo == NULL) {
-        return;
-    }
 
     offset = (uart_rx_fifo->head_ptr) % (uint32_t)(huart->RxXferSize);
     copy = tail_ptr - offset;
@@ -765,11 +768,17 @@ void UART_DMARX_HalfDone_Callback(UART_HandleTypeDef *huart) {
  *
  * @param huart 串口句柄
  */
-void UART_DMARX_Done_Callback(UART_HandleTypeDef *huart) {
+void uart_dmarx_done_callback(UART_HandleTypeDef *huart) {
+    uart_rx_fifo_t *uart_rx_fifo = UART_RX_Identify(huart);
+
+    if (uart_rx_fifo == NULL) {
+        return;
+    }
+
     uint32_t tail_ptr;
     uint32_t offset, copy;
 
-    /*
+    /**
      * +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
      * |                  half                  |
      * |                    | head_ptr tail_ptr |
@@ -781,18 +790,13 @@ void UART_DMARX_Done_Callback(UART_HandleTypeDef *huart) {
 
     tail_ptr = huart->RxXferSize;
 
-    uart_rx_fifo_t *uart_rx_fifo = UART_RX_Identify(huart);
-
-    if (uart_rx_fifo == NULL) {
-        return;
-    }
-
     offset = (uart_rx_fifo->head_ptr) % (uint32_t)(huart->RxXferSize);
     copy = tail_ptr - offset;
     uart_rx_fifo->head_ptr += copy;
 
     UART_Write_RxFifo(uart_rx_fifo, huart->pRxBuffPtr + offset, copy);
 }
+
 /**
  * @brief 从接收FIFO读数据
  *
@@ -801,7 +805,7 @@ void UART_DMARX_Done_Callback(UART_HandleTypeDef *huart) {
  * @param len `buf`长度
  * @return uint32_t 接收到的长度
  */
-uint32_t UART_DMARX_Read(UART_HandleTypeDef *huart, void *buf, uint32_t len) {
+uint32_t uart_dmarx_read(UART_HandleTypeDef *huart, void *buf, uint32_t len) {
     if ((buf == NULL) || (len == 0)) {
         return 0;
     }

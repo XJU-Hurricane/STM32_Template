@@ -55,7 +55,7 @@
 
 Template默认只打开了串口1，没有使用DMA。
 
-要打开其他串口到`Drivers\bsp\Inc\uart.h`中打开相应的宏开关（取消注释）。并在`uart.c`的`HAL_UART_RxCpltCallback`函数中编写相应的接受代码。
+要打开其他串口到`Drivers\bsp\Inc\uart.h`中打开相应的宏开关（取消注释）。并在`uart.c`的`HAL_UART_RxCpltCallback`函数中编写相应的接收代码。
 
 <img src="./assets/PixPin_2024-01-21_21-56-57.png" style="zoom: 80%;" />
 

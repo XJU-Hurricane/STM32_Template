@@ -338,7 +338,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>-Wno-padded -Wno-unsafe-buffer-usage -Wno-reserved-identifier -Wno-missing-noreturn -Wno-covered-switch-default -Wno-switch-enum -Wno-missing-prototypes -Wno-newline-eof -Wno-gnu-pointer-arith -Wno-declaration-after-statement</MiscControls>
-              <Define>USE_HAL_DRIVER,STM32F103xE,STM32F10X_HD</Define>
+              <Define>USE_HAL_DRIVER,STM32F103xE</Define>
               <Undefine></Undefine>
               <IncludePath>Drivers\CMSIS\Device\ST\STM32F1xx\Include;Drivers\STM32F1xx_HAL_Driver\Inc;Drivers\CMSIS\Include;Drivers\bsp\Inc;Drivers\system\Inc;RTE\_Template;.eide\deps;Application\Inc;Middlewares\Inc;Drivers\bsp\Third_Party;Middlewares\Third_Party;Application\Third_Party</IncludePath>
             </VariousControls>

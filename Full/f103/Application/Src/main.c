@@ -12,17 +12,30 @@
  * @brief 串口压力测试
  *
  */
-void UART_Stress(void) {
+void uart_stress(void) {
     static uint8_t buf[256];
     uint32_t len = 0;
 
     while (1) {
-        UART_DMATX_Send(&USART1_Handler);
-        len = UART_DMARX_Read(&USART1_Handler, buf, sizeof(buf));
+        uart_dmatx_send(&g_usart1_handler);
+        len = uart_dmarx_read(&g_usart1_handler, buf, sizeof(buf));
         if (len > 0) {
-            UART_DMATX_Write(&USART1_Handler, buf, len);
+            uart_dmatx_write(&g_usart1_handler, buf, len);
         }
     }
+}
+
+/**
+ * @brief 板层驱动初始化
+ * 
+ */
+void bsp_init(void) {
+    HAL_Init();                         /* 初始化HAL库 */
+    sys_stm32_clock_init(RCC_PLL_MUL9); /* 设置时钟,72M */
+    delay_init(72);                     /* 初始化延时 */
+    usart1_init(115200);                /* 串口1初始化 */
+    led_init();                         /* LED初始化 */
+    key_init();                         /* 按键初始化 */
 }
 
 /**
@@ -31,28 +44,23 @@ void UART_Stress(void) {
  * @return int
  */
 int main(void) {
-    HAL_Init();                         /* 初始化HAL库 */
-    sys_stm32_clock_init(RCC_PLL_MUL9); /* 设置时钟,72M */
-    delay_init(72);                     /* 初始化延时 */
-    USART1_Init(115200);                /* 串口1初始化 */
-    LED_Init();                         /* LED初始化 */
-    KEY_Init();                         /* 按键初始化 */
+    bsp_init();
 
     LED0_TOGGLE();
     uint16_t times = 0;
     uint8_t key = 0;
     while (1) {
-        key = KEY_Scan(0);
-        if (USART1_RX_STA & 0x8000) {
+        key = key_scan(0);
+        if (g_usart1_rx_status & 0x8000) {
             /* 得到此次接收到的数据长度 */
-            uint16_t len = USART1_RX_STA & (uint16_t)0x3fff;
+            uint16_t len = g_usart1_rx_status & (uint16_t)0x3fff;
             printf("您发送的消息为:\r\n\033[32m");
-            HAL_UART_Transmit(&USART1_Handler, (uint8_t *)USART1_RX_BUF, len,
+            HAL_UART_Transmit(&g_usart1_handler, (uint8_t *)g_usart1_rx_buf, len,
                               1000); /* 发送接收到的数据 */
-            while (__HAL_UART_GET_FLAG(&USART1_Handler, UART_FLAG_TC) != SET)
+            while (__HAL_UART_GET_FLAG(&g_usart1_handler, UART_FLAG_TC) != SET)
                 ;                   /* 等待发送结束 */
             printf("\033[39m\r\n"); /* 插入换行 */
-            USART1_RX_STA = 0;
+            g_usart1_rx_status = 0;
         }
 
         if (key != 0) {

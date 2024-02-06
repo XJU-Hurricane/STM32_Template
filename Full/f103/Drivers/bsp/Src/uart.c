@@ -19,7 +19,7 @@
     #include "os.h" /* os 使用 */
 #endif              /* SYS_SUPPORT_OS */
 
-static uint8_t USART_TX_Buf[TX_BUF_LEN];
+static uint8_t g_uart_tx_buf[TX_BUF_LEN];
 
 /*******************************************************************************
  * @defgroup 串口1
@@ -27,17 +27,17 @@ static uint8_t USART_TX_Buf[TX_BUF_LEN];
  */
 
 #ifdef EN_USART1
-UART_HandleTypeDef USART1_Handler;
+UART_HandleTypeDef g_usart1_handler;
     #if EN_USART1_RX
         #if !USART1_USE_DMA_RX
-uint8_t USART1_RX_BUF[USART_REC_LEN];
+uint8_t g_usart1_rx_buf[USART_REC_LEN];
 /**
  * 接收状态
  * bit15: 接收完成标志; bit14: 接收到0x0d
  * bit13~0: 接收到的有效字节数目
  */
-uint16_t USART1_RX_STA = 0;
-uint8_t g_usart1_rx_buf[RXBUFFERSIZE];
+uint16_t g_usart1_rx_status = 0;
+uint8_t g_usart1_recv_buf[RXBUFFERSIZE];
         #endif /* !USART1_USE_DMA_RX */
 /**
  * @brief 串口1中断服务函数
@@ -48,13 +48,13 @@ void USART1_IRQHandler(void) {
         #endif /* SYS_SUPPORT_OS */
 
         #if USART1_USE_IDLE_IT
-    if (__HAL_UART_GET_FLAG(&USART1_Handler, UART_FLAG_IDLE)) {
-        __HAL_USART_CLEAR_IDLEFLAG(&USART1_Handler);
-        UART_DMARX_Idle_Callback(&USART1_Handler);
+    if (__HAL_UART_GET_FLAG(&g_usart1_handler, UART_FLAG_IDLE)) {
+        __HAL_USART_CLEAR_IDLEFLAG(&g_usart1_handler);
+        uart_dmarx_idle_callback(&g_usart1_handler);
     }
         #endif /* USART1_USE_IDLE_IT */
 
-    HAL_UART_IRQHandler(&USART1_Handler); /* 调用HAL库中断处理公用函数 */
+    HAL_UART_IRQHandler(&g_usart1_handler); /* 调用HAL库中断处理公用函数 */
 
         #if SYS_SUPPORT_OS /* 使用OS */
     OSIntExit();
@@ -65,28 +65,28 @@ void USART1_IRQHandler(void) {
  * @brief 串口1初始化
  * @param bound 波特率
  */
-void USART1_Init(uint32_t bound) {
-    USART1_Handler.Instance = USART1;
-    USART1_Handler.Init.BaudRate = bound;
-    USART1_Handler.Init.WordLength = UART_WORDLENGTH_8B;
-    USART1_Handler.Init.StopBits = UART_STOPBITS_1;
-    USART1_Handler.Init.Parity = UART_PARITY_NONE;
-    USART1_Handler.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-    USART1_Handler.Init.Mode = UART_MODE_TX_RX;
+void usart1_init(uint32_t bound) {
+    g_usart1_handler.Instance = USART1;
+    g_usart1_handler.Init.BaudRate = bound;
+    g_usart1_handler.Init.WordLength = UART_WORDLENGTH_8B;
+    g_usart1_handler.Init.StopBits = UART_STOPBITS_1;
+    g_usart1_handler.Init.Parity = UART_PARITY_NONE;
+    g_usart1_handler.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+    g_usart1_handler.Init.Mode = UART_MODE_TX_RX;
 
-    HAL_UART_Init(&USART1_Handler);
+    HAL_UART_Init(&g_usart1_handler);
 
     #if USART1_USE_DMA_TX
     /* 打开DMA发送 */
-    USART1_TX_DMA_Init(2048, 128);
+    usart1_dmatx_init(2048, 128);
     #endif /* USART1_USE_DMA_TX */
 
     #if EN_USART1_RX
         #if USART1_USE_DMA_RX
     /* 使用DMA, 打开DMA接收 */
-    USART1_RX_DMA_Init(4096, 128);
+    usart1_dmarx_init(4096, 128);
         #else  /* USART1_USE_DMA_RX */
-    HAL_UART_Receive_IT(&USART1_Handler, (uint8_t *)g_usart1_rx_buf,
+    HAL_UART_Receive_IT(&g_usart1_handler, (uint8_t *)g_usart1_recv_buf,
                         RXBUFFERSIZE);
         #endif /* USART1_USE_DMA_RX */
     #endif     /* EN_USART1_RX */
@@ -104,17 +104,17 @@ void USART1_Init(uint32_t bound) {
  */
 
 #ifdef EN_USART2
-UART_HandleTypeDef USART2_Handler;
+UART_HandleTypeDef g_usart2_handler;
     #if EN_USART2_RX
         #if !USART2_USE_DMA_RX
-uint8_t USART2_RX_BUF[USART_REC_LEN];
+uint8_t g_usart2_rx_buf[USART_REC_LEN];
 /**
  * 接收状态
  * bit15: 接收完成标志; bit14: 接收到0x0d
  * bit13~0: 接收到的有效字节数目
  */
-uint16_t USART2_RX_STA = 0;
-uint8_t g_usart2_rx_buf[RXBUFFERSIZE];
+uint16_t g_usart2_rx_status = 0;
+uint8_t g_usart2_recv_buf[RXBUFFERSIZE];
         #endif /* !USART2_USE_DMA_RX */
 /**
  * @brief 串口2中断服务函数
@@ -125,13 +125,13 @@ void USART2_IRQHandler(void) {
         #endif /* SYS_SUPPORT_OS */
 
         #if USART2_USE_IDLE_IT
-    if (__HAL_UART_GET_FLAG(&USART2_Handler, UART_FLAG_IDLE)) {
-        __HAL_USART_CLEAR_IDLEFLAG(&USART2_Handler);
-        UART_DMARX_Idle_Callback(&USART2_Handler);
+    if (__HAL_UART_GET_FLAG(&g_usart2_handler, UART_FLAG_IDLE)) {
+        __HAL_USART_CLEAR_IDLEFLAG(&g_usart2_handler);
+        uart_dmarx_idle_callback(&g_usart2_handler);
     }
         #endif /* USART2_USE_IDLE_IT */
 
-    HAL_UART_IRQHandler(&USART2_Handler); /* 调用HAL库中断处理公用函数 */
+    HAL_UART_IRQHandler(&g_usart2_handler); /* 调用HAL库中断处理公用函数 */
 
         #if SYS_SUPPORT_OS /* 使用OS */
     OSIntExit();
@@ -142,27 +142,27 @@ void USART2_IRQHandler(void) {
  * @brief 串口2初始化
  * @param bound 波特率
  */
-void USART2_Init(uint32_t bound) {
-    USART2_Handler.Instance = USART2;
-    USART2_Handler.Init.BaudRate = bound;
-    USART2_Handler.Init.WordLength = UART_WORDLENGTH_8B;
-    USART2_Handler.Init.StopBits = UART_STOPBITS_1;
-    USART2_Handler.Init.Parity = UART_PARITY_NONE;
-    USART2_Handler.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-    USART2_Handler.Init.Mode = UART_MODE_TX_RX;
-    HAL_UART_Init(&USART2_Handler);
+void usart2_init(uint32_t bound) {
+    g_usart2_handler.Instance = USART2;
+    g_usart2_handler.Init.BaudRate = bound;
+    g_usart2_handler.Init.WordLength = UART_WORDLENGTH_8B;
+    g_usart2_handler.Init.StopBits = UART_STOPBITS_1;
+    g_usart2_handler.Init.Parity = UART_PARITY_NONE;
+    g_usart2_handler.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+    g_usart2_handler.Init.Mode = UART_MODE_TX_RX;
+    HAL_UART_Init(&g_usart2_handler);
 
     #if USART2_USE_DMA_TX
     /* 打开DMA发送 */
-    USART2_TX_DMA_Init(2048, 128);
+    usart2_dmatx_init(2048, 128);
     #endif /* USART2_USE_DMA_TX */
 
     #if EN_USART2_RX
         #if USART2_USE_DMA_RX
     /* 使用DMA, 打开DMA接收 */
-    USART2_RX_DMA_Init(4096, 128);
+    usart2_dmarx_init(4096, 128);
         #else  /* USART2_USE_DMA_RX */
-    HAL_UART_Receive_IT(&USART2_Handler, (uint8_t *)g_usart2_rx_buf,
+    HAL_UART_Receive_IT(&g_usart2_handler, (uint8_t *)g_usart2_recv_buf,
                         RXBUFFERSIZE);
         #endif /* USART2_USE_DMA_RX */
     #endif     /* EN_USART2_RX */
@@ -179,17 +179,17 @@ void USART2_Init(uint32_t bound) {
  */
 
 #ifdef EN_USART3
-UART_HandleTypeDef USART3_Handler;
+UART_HandleTypeDef g_usart3_handler;
     #if EN_USART3_RX
         #if !USART3_USE_DMA_RX
-uint8_t USART3_RX_BUF[USART_REC_LEN];
+uint8_t g_usart3_rx_buf[USART_REC_LEN];
 /**
  * 接收状态
  * bit15: 接收完成标志; bit14: 接收到0x0d
  * bit13~0: 接收到的有效字节数目
  */
-uint16_t USART3_RX_STA = 0;
-uint8_t g_usart3_rx_buf[RXBUFFERSIZE];
+uint16_t g_usart3_rx_status = 0;
+uint8_t g_usart3_recv_buf[RXBUFFERSIZE];
         #endif /* !USART3_USE_DMA_RX */
 /**
  * @brief 串口3中断服务函数
@@ -200,13 +200,13 @@ void USART3_IRQHandler(void) {
         #endif /* SYS_SUPPORT_OS */
 
         #if USART3_USE_IDLE_IT
-    if (__HAL_UART_GET_FLAG(&USART3_Handler, UART_FLAG_IDLE)) {
-        __HAL_USART_CLEAR_IDLEFLAG(&USART3_Handler);
-        UART_DMARX_Idle_Callback(&USART3_Handler);
+    if (__HAL_UART_GET_FLAG(&g_usart3_handler, UART_FLAG_IDLE)) {
+        __HAL_USART_CLEAR_IDLEFLAG(&g_usart3_handler);
+        uart_dmarx_idle_callback(&g_usart3_handler);
     }
         #endif /* USART3_USE_IDLE_IT */
 
-    HAL_UART_IRQHandler(&USART3_Handler); /* 调用HAL库中断处理公用函数 */
+    HAL_UART_IRQHandler(&g_usart3_handler); /* 调用HAL库中断处理公用函数 */
 
         #if SYS_SUPPORT_OS /* 使用OS */
     OSIntExit();
@@ -217,27 +217,27 @@ void USART3_IRQHandler(void) {
  * @brief 串口3初始化
  * @param bound 波特率
  */
-void USART3_Init(uint32_t bound) {
-    USART3_Handler.Instance = USART3;
-    USART3_Handler.Init.BaudRate = bound;
-    USART3_Handler.Init.WordLength = UART_WORDLENGTH_8B;
-    USART3_Handler.Init.StopBits = UART_STOPBITS_1;
-    USART3_Handler.Init.Parity = UART_PARITY_NONE;
-    USART3_Handler.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-    USART3_Handler.Init.Mode = UART_MODE_TX_RX;
-    HAL_UART_Init(&USART3_Handler);
+void usart3_init(uint32_t bound) {
+    g_usart3_handler.Instance = USART3;
+    g_usart3_handler.Init.BaudRate = bound;
+    g_usart3_handler.Init.WordLength = UART_WORDLENGTH_8B;
+    g_usart3_handler.Init.StopBits = UART_STOPBITS_1;
+    g_usart3_handler.Init.Parity = UART_PARITY_NONE;
+    g_usart3_handler.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+    g_usart3_handler.Init.Mode = UART_MODE_TX_RX;
+    HAL_UART_Init(&g_usart3_handler);
 
     #if USART3_USE_DMA_TX
     /* 打开DMA发送 */
-    USART3_TX_DMA_Init(2048, 128);
+    usart3_dmatx_init(2048, 128);
     #endif /* USART3_USE_DMA_TX */
 
     #if EN_USART3_RX
         #if USART3_USE_DMA_RX
     /* 使用DMA, 打开DMA接收 */
-    USART3_RX_DMA_Init(4096, 128);
+    usart3_dmarx_init(4096, 128);
         #else  /* USART3_USE_DMA_RX */
-    HAL_UART_Receive_IT(&USART3_Handler, (uint8_t *)g_usart3_rx_buf,
+    HAL_UART_Receive_IT(&g_usart3_handler, (uint8_t *)g_usart3_recv_buf,
                         RXBUFFERSIZE);
         #endif /* USART3_USE_DMA_RX */
     #endif     /* EN_USART3_RX */
@@ -257,14 +257,14 @@ void USART3_Init(uint32_t bound) {
 UART_HandleTypeDef UART4_Handler;
     #if EN_UART4_RX
         #if !UART4_USE_DMA_RX
-uint8_t UART4_RX_BUF[USART_REC_LEN];
+uint8_t g_uart4_rx_buf[USART_REC_LEN];
 /**
  * 接收状态
  * bit15: 接收完成标志; bit14: 接收到0x0d
  * bit13~0: 接收到的有效字节数目
  */
-uint16_t UART4_RX_STA = 0;
-uint8_t g_uart4_rx_buf[RXBUFFERSIZE];
+uint16_t g_uart4_rx_status = 0;
+uint8_t g_uart4_recv_buf[RXBUFFERSIZE];
         #endif /* !UART4_USE_DMA_RX */
 /**
  * @brief 串口4中断服务函数
@@ -277,7 +277,7 @@ void UART4_IRQHandler(void) {
         #if UART4_USE_IDLE_IT
     if (__HAL_UART_GET_FLAG(&UART4_Handler, UART_FLAG_IDLE)) {
         __HAL_USART_CLEAR_IDLEFLAG(&UART4_Handler);
-        UART_DMARX_Idle_Callback(&UART4_Handler);
+        uart_dmarx_idle_callback(&UART4_Handler);
     }
         #endif /* UART4_USE_IDLE_IT */
 
@@ -292,7 +292,7 @@ void UART4_IRQHandler(void) {
  * @brief 串口4初始化
  * @param bound 波特率
  */
-void UART4_Init(uint32_t bound) {
+void uart4_init(uint32_t bound) {
     UART4_Handler.Instance = UART4;
     UART4_Handler.Init.BaudRate = bound;
     UART4_Handler.Init.WordLength = UART_WORDLENGTH_8B;
@@ -304,15 +304,15 @@ void UART4_Init(uint32_t bound) {
 
     #if UART4_USE_DMA_TX
     /* 打开DMA发送 */
-    UART4_TX_DMA_Init(2048, 128);
+    uart4_dmatx_init(2048, 128);
     #endif /* UART4_USE_DMA_TX */
 
     #if EN_UART4_RX
         #if UART4_USE_DMA_RX
     /* 使用DMA, 打开DMA接收 */
-    UART4_RX_DMA_Init(4096, 128);
+    uart4_dmarx_init(4096, 128);
         #else  /* UART4_USE_DMA_RX */
-    HAL_UART_Receive_IT(&UART4_Handler, (uint8_t *)g_uart4_rx_buf,
+    HAL_UART_Receive_IT(&UART4_Handler, (uint8_t *)g_uart4_recv_buf,
                         RXBUFFERSIZE);
         #endif /* UART4_USE_DMA_RX */
     #endif     /* EN_UART4_RX */
@@ -331,14 +331,14 @@ void UART4_Init(uint32_t bound) {
 #ifdef EN_UART5
 UART_HandleTypeDef UART5_Handler;
     #if EN_UART5_RX
-uint8_t UART5_RX_BUF[USART_REC_LEN];
+uint8_t g_uart5_rx_buf[USART_REC_LEN];
 /**
  * 接收状态
  * bit15: 接收完成标志; bit14: 接收到0x0d
  * bit13~0: 接收到的有效字节数目
  */
-uint16_t UART5_RX_STA = 0;
-uint8_t g_uart5_rx_buf[RXBUFFERSIZE];
+uint16_t g_uart5_rx_status = 0;
+uint8_t g_uart5_recv_buf[RXBUFFERSIZE];
 /**
  * @brief 串口5中断服务函数
  */
@@ -358,7 +358,7 @@ void UART5_IRQHandler(void) {
  * @brief 串口5初始化
  * @param bound 波特率
  */
-void UART5_Init(uint32_t bound) {
+void uart5_init(uint32_t bound) {
     UART5_Handler.Instance = UART5;
     UART5_Handler.Init.BaudRate = bound;
     UART5_Handler.Init.WordLength = UART_WORDLENGTH_8B;
@@ -368,7 +368,7 @@ void UART5_Init(uint32_t bound) {
     UART5_Handler.Init.Mode = UART_MODE_TX_RX;
     HAL_UART_Init(&UART5_Handler);
     #if EN_UART5_RX
-    HAL_UART_Receive_IT(&UART5_Handler, (uint8_t *)g_uart5_rx_buf,
+    HAL_UART_Receive_IT(&UART5_Handler, (uint8_t *)g_uart5_recv_buf,
                         RXBUFFERSIZE);
     #endif /* EN_UART5_RX */
 }
@@ -485,7 +485,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
  * @param huart 串口句柄
  */
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart) {
-    UART_DMATX_Clear_TC_Flag(huart);
+    uart_dmatx_clear_tc_flag(huart);
 }
 
 /**
@@ -502,33 +502,33 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
          * 以下用于测试中断回调是否有问题,根据实际情况修改
          * 也可以将接收写在中断服务函数中
          */
-        if ((USART1_RX_STA & 0x8000) == 0) {
+        if ((g_usart1_rx_status & 0x8000) == 0) {
             /* 接收未完成 */
-            if (USART1_RX_STA & 0x4000) {
+            if (g_usart1_rx_status & 0x4000) {
                 /* 接收到了0x0d(即\r) */
-                if (g_usart1_rx_buf[0] != 0x0a) {
+                if (g_usart1_recv_buf[0] != 0x0a) {
                     /* 不是0x0a(即\n) */
-                    USART1_RX_STA = 0; /* 接收错误,重新开始 */
+                    g_usart1_rx_status = 0; /* 接收错误,重新开始 */
                 } else {
-                    USART1_RX_STA |= 0x8000; /* 接收完成了 */
+                    g_usart1_rx_status |= 0x8000; /* 接收完成了 */
                 }
             } else {
                 /* 还没收到0x0d(即\r) */
-                if (g_usart1_rx_buf[0] == 0x0d) {
-                    USART1_RX_STA |= 0x4000;
+                if (g_usart1_recv_buf[0] == 0x0d) {
+                    g_usart1_rx_status |= 0x4000;
                 } else {
-                    USART1_RX_BUF[USART1_RX_STA & 0X3FFF] = g_usart1_rx_buf[0];
-                    USART1_RX_STA++;
-                    if (USART1_RX_STA > (USART_REC_LEN - 1)) {
-                        USART1_RX_STA = 0; /* 接收数据错误,重新开始接收 */
+                    g_usart1_rx_buf[g_usart1_rx_status & 0X3FFF] = g_usart1_recv_buf[0];
+                    g_usart1_rx_status++;
+                    if (g_usart1_rx_status > (USART_REC_LEN - 1)) {
+                        g_usart1_rx_status = 0; /* 接收数据错误,重新开始接收 */
                     }
                 }
             }
         }
-        HAL_UART_Receive_IT(&USART1_Handler, (uint8_t *)g_usart1_rx_buf,
+        HAL_UART_Receive_IT(&g_usart1_handler, (uint8_t *)g_usart1_recv_buf,
                             RXBUFFERSIZE);
     #else  /* !USART1_USE_DMA_RX */
-        UART_DMARX_Done_Callback(huart);
+        uart_dmarx_done_callback(huart);
         if (huart->hdmarx->Init.Mode != DMA_CIRCULAR) {
             while (HAL_UART_Receive_DMA(huart, huart->pRxBuffPtr,
                                         huart->RxXferSize)) {
@@ -544,33 +544,33 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
          * 以下用于测试中断回调是否有问题,根据实际情况修改
          * 也可以将接收写在中断服务函数中
          */
-        if ((USART2_RX_STA & 0x8000) == 0) {
+        if ((g_usart2_rx_status & 0x8000) == 0) {
             /* 接收未完成 */
-            if (USART2_RX_STA & 0x4000) {
+            if (g_usart2_rx_status & 0x4000) {
                 /* 接收到了0x0d(即\r) */
-                if (g_usart2_rx_buf[0] != 0x0a) {
+                if (g_usart2_recv_buf[0] != 0x0a) {
                     /* 不是0x0a(即\n) */
-                    USART2_RX_STA = 0; /* 接收错误,重新开始 */
+                    g_usart2_rx_status = 0; /* 接收错误,重新开始 */
                 } else {
-                    USART2_RX_STA |= 0x8000; /* 接收完成了 */
+                    g_usart2_rx_status |= 0x8000; /* 接收完成了 */
                 }
             } else {
                 /* 还没收到0x0d(即\r) */
-                if (g_usart2_rx_buf[0] == 0x0d) {
-                    USART2_RX_STA |= 0x4000;
+                if (g_usart2_recv_buf[0] == 0x0d) {
+                    g_usart2_rx_status |= 0x4000;
                 } else {
-                    USART2_RX_BUF[USART2_RX_STA & 0X3FFF] = g_usart2_rx_buf[0];
-                    USART2_RX_STA++;
-                    if (USART2_RX_STA > (USART_REC_LEN - 1)) {
-                        USART2_RX_STA = 0; /* 接收数据错误,重新开始接收 */
+                    g_usart2_rx_buf[g_usart2_rx_status & 0X3FFF] = g_usart2_recv_buf[0];
+                    g_usart2_rx_status++;
+                    if (g_usart2_rx_status > (USART_REC_LEN - 1)) {
+                        g_usart2_rx_status = 0; /* 接收数据错误,重新开始接收 */
                     }
                 }
             }
         }
-        HAL_UART_Receive_IT(&USART2_Handler, (uint8_t *)g_usart2_rx_buf,
+        HAL_UART_Receive_IT(&g_usart2_handler, (uint8_t *)g_usart2_recv_buf,
                             RXBUFFERSIZE);
     #else  /* !USART2_USE_DMA_RX */
-        UART_DMARX_Done_Callback(huart);
+        uart_dmarx_done_callback(huart);
         if (huart->hdmarx->Init.Mode != DMA_CIRCULAR) {
             while (HAL_UART_Receive_DMA(huart, huart->pRxBuffPtr,
                                         huart->RxXferSize)) {
@@ -586,33 +586,33 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
          * 以下用于测试中断回调是否有问题,根据实际情况修改
          * 也可以将接收写在中断服务函数中
          */
-        if ((USART3_RX_STA & 0x8000) == 0) {
+        if ((g_usart3_rx_status & 0x8000) == 0) {
             /* 接收未完成 */
-            if (USART3_RX_STA & 0x4000) {
+            if (g_usart3_rx_status & 0x4000) {
                 /* 接收到了0x0d(即\r) */
-                if (g_usart3_rx_buf[0] != 0x0a) {
+                if (g_usart3_recv_buf[0] != 0x0a) {
                     /* 不是0x0a(即\n) */
-                    USART3_RX_STA = 0; /* 接收错误,重新开始 */
+                    g_usart3_rx_status = 0; /* 接收错误,重新开始 */
                 } else {
-                    USART3_RX_STA |= 0x8000; /* 接收完成了 */
+                    g_usart3_rx_status |= 0x8000; /* 接收完成了 */
                 }
             } else {
                 /* 还没收到0x0d(即\r) */
-                if (g_usart3_rx_buf[0] == 0x0d) {
-                    USART3_RX_STA |= 0x4000;
+                if (g_usart3_recv_buf[0] == 0x0d) {
+                    g_usart3_rx_status |= 0x4000;
                 } else {
-                    USART3_RX_BUF[USART3_RX_STA & 0X3FFF] = g_usart3_rx_buf[0];
-                    USART3_RX_STA++;
-                    if (USART3_RX_STA > (USART_REC_LEN - 1)) {
-                        USART3_RX_STA = 0; /* 接收数据错误,重新开始接收 */
+                    g_usart3_rx_buf[g_usart3_rx_status & 0X3FFF] = g_usart3_recv_buf[0];
+                    g_usart3_rx_status++;
+                    if (g_usart3_rx_status > (USART_REC_LEN - 1)) {
+                        g_usart3_rx_status = 0; /* 接收数据错误,重新开始接收 */
                     }
                 }
             }
         }
-        HAL_UART_Receive_IT(&USART3_Handler, (uint8_t *)g_usart3_rx_buf,
+        HAL_UART_Receive_IT(&g_usart3_handler, (uint8_t *)g_usart3_recv_buf,
                             RXBUFFERSIZE);
     #else  /* !USART3_USE_DMA_RX */
-        UART_DMARX_Done_Callback(huart);
+        uart_dmarx_done_callback(huart);
         if (huart->hdmarx->Init.Mode != DMA_CIRCULAR) {
             while (HAL_UART_Receive_DMA(huart, huart->pRxBuffPtr,
                                         huart->RxXferSize)) {
@@ -628,33 +628,33 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
          * 以下用于测试中断回调是否有问题,根据实际情况修改
          * 也可以将接收写在中断服务函数中
          */
-        if ((UART4_RX_STA & 0x8000) == 0) {
+        if ((g_uart4_rx_status & 0x8000) == 0) {
             /* 接收未完成 */
-            if (UART4_RX_STA & 0x4000) {
+            if (g_uart4_rx_status & 0x4000) {
                 /* 接收到了0x0d(即\r) */
-                if (g_uart4_rx_buf[0] != 0x0a) {
+                if (g_uart4_recv_buf[0] != 0x0a) {
                     /* 不是0x0a(即\n) */
-                    UART4_RX_STA = 0; /* 接收错误,重新开始 */
+                    g_uart4_rx_status = 0; /* 接收错误,重新开始 */
                 } else {
-                    UART4_RX_STA |= 0x8000; /* 接收完成了 */
+                    g_uart4_rx_status |= 0x8000; /* 接收完成了 */
                 }
             } else {
                 /* 还没收到0x0d(即\r) */
-                if (g_uart4_rx_buf[0] == 0x0d) {
-                    UART4_RX_STA |= 0x4000;
+                if (g_uart4_recv_buf[0] == 0x0d) {
+                    g_uart4_rx_status |= 0x4000;
                 } else {
-                    UART4_RX_BUF[UART4_RX_STA & 0X3FFF] = g_uart4_rx_buf[0];
-                    UART4_RX_STA++;
-                    if (UART4_RX_STA > (USART_REC_LEN - 1)) {
-                        UART4_RX_STA = 0; /* 接收数据错误,重新开始接收 */
+                    g_uart4_rx_buf[g_uart4_rx_status & 0X3FFF] = g_uart4_recv_buf[0];
+                    g_uart4_rx_status++;
+                    if (g_uart4_rx_status > (USART_REC_LEN - 1)) {
+                        g_uart4_rx_status = 0; /* 接收数据错误,重新开始接收 */
                     }
                 }
             }
         }
-        HAL_UART_Receive_IT(&UART4_Handler, (uint8_t *)g_uart4_rx_buf,
+        HAL_UART_Receive_IT(&UART4_Handler, (uint8_t *)g_uart4_recv_buf,
                             RXBUFFERSIZE);
     #else  /* !UART4_USE_DMA_RX */
-        UART_DMARX_Done_Callback(huart);
+        uart_dmarx_done_callback(huart);
         if (huart->hdmarx->Init.Mode != DMA_CIRCULAR) {
             while (HAL_UART_Receive_DMA(huart, huart->pRxBuffPtr,
                                         huart->RxXferSize)) {
@@ -665,28 +665,28 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 #endif     /* EN_UART4_RX */
     } else if (huart->Instance == UART5) {
 #if EN_UART5_RX
-        if ((UART5_RX_STA & 0x8000) == 0) {
+        if ((g_uart5_rx_status & 0x8000) == 0) {
             /* 接收未完成 */
-            if (UART5_RX_STA & 0x4000) {
+            if (g_uart5_rx_status & 0x4000) {
                 /* 接收到了0x0d */
-                if (g_uart5_rx_buf[0] != 0x0a) {
-                    UART5_RX_STA = 0; /* 接收错误,重新开始 */
+                if (g_uart5_recv_buf[0] != 0x0a) {
+                    g_uart5_rx_status = 0; /* 接收错误,重新开始 */
                 } else {
-                    UART5_RX_STA |= 0x8000; /* 接收完成了 */
+                    g_uart5_rx_status |= 0x8000; /* 接收完成了 */
                 }
             } else {
                 /* 还没收到0X0D */
-                if (g_uart5_rx_buf[0] == 0x0d) {
-                    UART5_RX_STA |= 0x4000;
+                if (g_uart5_recv_buf[0] == 0x0d) {
+                    g_uart5_rx_status |= 0x4000;
                 } else {
-                    UART5_RX_BUF[UART5_RX_STA & 0X3FFF] = g_uart5_rx_buf[0];
-                    UART5_RX_STA++;
-                    if (UART5_RX_STA > (USART_REC_LEN - 1)) {
-                        UART5_RX_STA = 0; /* 接收数据错误,重新开始接收 */
+                    g_uart5_rx_buf[g_uart5_rx_status & 0X3FFF] = g_uart5_recv_buf[0];
+                    g_uart5_rx_status++;
+                    if (g_uart5_rx_status > (USART_REC_LEN - 1)) {
+                        g_uart5_rx_status = 0; /* 接收数据错误,重新开始接收 */
                     }
                 }
             }
-            HAL_UART_Receive_IT(&UART5_Handler, (uint8_t *)g_uart5_rx_buf,
+            HAL_UART_Receive_IT(&UART5_Handler, (uint8_t *)g_uart5_recv_buf,
                                 RXBUFFERSIZE);
         }
 #endif /* EN_UART5_RX */
@@ -699,7 +699,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
  * @param huart 串口句柄
  */
 void HAL_UART_RxHalfCpltCallback(UART_HandleTypeDef *huart) {
-    UART_DMARX_HalfDone_Callback(huart);
+    uart_dmarx_halfdone_callbackk(huart);
 }
 
 /**
@@ -762,15 +762,15 @@ void uart_print(UART_HandleTypeDef *huart, const char *__format, ...) {
     va_start(ap, __format);
 
     /* 清空发送缓冲区 */
-    memset(USART_TX_Buf, 0x0, TX_BUF_LEN);
+    memset(g_uart_tx_buf, 0x0, TX_BUF_LEN);
 
     /* 填充发送缓冲区 */
-    vsnprintf((char *)USART_TX_Buf, TX_BUF_LEN, (const char *)__format, ap);
+    vsnprintf((char *)g_uart_tx_buf, TX_BUF_LEN, (const char *)__format, ap);
     va_end(ap);
-    len = strlen((const char *)USART_TX_Buf);
+    len = strlen((const char *)g_uart_tx_buf);
 
     /* 往串口发送数据 */
-    HAL_UART_Transmit(huart, (uint8_t *)&USART_TX_Buf, (uint16_t)len, 0xFFFF);
+    HAL_UART_Transmit(huart, (uint8_t *)&g_uart_tx_buf, (uint16_t)len, 0xFFFF);
 }
 
 /**
@@ -840,7 +840,7 @@ int fputc(int ch, FILE *f) {
         #pragma import(__use_no_semihosting) /* 不适用半主机模式 */
 /*重新定义__write函数*/
 int _write(int fd, char *ptr, int len) {
-    HAL_UART_Transmit(&USART1_Handler, (uint8_t *)ptr, len, 0xFFFF);
+    HAL_UART_Transmit(&g_usart1_handler, (uint8_t *)ptr, len, 0xFFFF);
     return len;
 }
 

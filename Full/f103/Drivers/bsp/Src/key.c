@@ -12,7 +12,7 @@
  * @brief 按键初始化函数
  *
  */
-void KEY_Init(void) {
+void key_init(void) {
     GPIO_InitTypeDef GPIO_Initure;
 
     KEY0_ENABLE();
@@ -48,7 +48,7 @@ void KEY_Init(void) {
  *  @retval 未按下:`0`
  * @note 注意此函数有响应优先级,`KEY0 > KEY1 > WK_UP`
  */
-uint8_t KEY_Scan(uint8_t mode) {
+uint8_t key_scan(uint8_t mode) {
     static uint8_t key_up = 1; /* 按键松开标志 */
     if (mode == 1) {
         key_up = 1; /* 支持连按 */

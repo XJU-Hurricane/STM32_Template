@@ -12,7 +12,7 @@
  * @brief LED初始化
  *
  */
-void LED_Init(void) {
+void led_init(void) {
     GPIO_InitTypeDef GPIO_Initure;
 
     LED0_ENABLE();

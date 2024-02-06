@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "*.s": "a251",
+        "*.cpp": "cpp",
+        "uart.h": "c",
+        "main.h": "c"
+    }
+}

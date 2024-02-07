@@ -16,12 +16,12 @@
 /* LED0定义 */
 #define LED0_PORT     GPIOB
 #define LED0_ENABLE() __HAL_RCC_GPIOB_CLK_ENABLE()
-#define LED0_PIN      GPIO_PIN_0
+#define LED0_PIN      GPIO_PIN_1
 
 /* LED1定义 */
 #define LED1_PORT     GPIOB
 #define LED1_ENABLE() __HAL_RCC_GPIOB_CLK_ENABLE()
-#define LED1_PIN      GPIO_PIN_1
+#define LED1_PIN      GPIO_PIN_0
 
 /* 控制两个LED */
 #define LED0(x)                                                                \

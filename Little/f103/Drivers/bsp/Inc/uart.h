@@ -15,9 +15,7 @@
 #ifndef __UART_H
 #define __UART_H
 
-#include "stdarg.h"
 #include "stdio.h"
-#include "string.h"
 #include "sys.h"
 
 #define USART_REC_LEN 200 /* 定义USART最大接收字节数 200 */
@@ -54,13 +52,13 @@
 
 #ifdef EN_USART1
 /* 句柄 */
-extern UART_HandleTypeDef g_usart1_handler;
-    /* 接收buf */
-    #if EN_USART1_RX
+extern UART_HandleTypeDef g_usart1_handle;
+/* 接收buf */
+#if EN_USART1_RX
 extern uint8_t g_usart1_rx_buf[USART_REC_LEN];
 extern uint16_t g_usart1_rx_status;
 extern uint8_t g_usart1_recv_buf[RXBUFFERSIZE];
-    #endif /* EN_USART1_RX */
+#endif /* EN_USART1_RX */
 
 void usart1_init(uint32_t bound);
 #endif /* EN_USART1 */
@@ -76,13 +74,13 @@ void usart1_init(uint32_t bound);
 
 #ifdef EN_USART2
 /* 句柄 */
-extern UART_HandleTypeDef g_usart2_handler;
-    /* 接收buf */
-    #if EN_USART2_RX
+extern UART_HandleTypeDef g_usart2_handle;
+/* 接收buf */
+#if EN_USART2_RX
 extern uint8_t g_usart2_rx_buf[USART_REC_LEN];
 extern uint16_t g_usart2_rx_status;
 extern uint8_t g_usart2_recv_buf[RXBUFFERSIZE];
-    #endif /* EN_USART2 */
+#endif /* EN_USART2 */
 
 void usart2_init(uint32_t bound);
 #endif /* EN_USART2 */
@@ -98,13 +96,13 @@ void usart2_init(uint32_t bound);
 
 #ifdef EN_USART3
 /* 句柄 */
-extern UART_HandleTypeDef g_usart3_handler;
-    /* 接收buf */
-    #if EN_USART3_RX
+extern UART_HandleTypeDef g_usart3_handle;
+/* 接收buf */
+#if EN_USART3_RX
 extern uint8_t g_usart3_rx_buf[USART_REC_LEN];
 extern uint16_t g_usart3_rx_status;
 extern uint8_t g_usart3_recv_buf[RXBUFFERSIZE];
-    #endif /* EN_USART3_RX */
+#endif /* EN_USART3_RX */
 void usart3_init(uint32_t bound);
 #endif /* EN_USART3 */
 
@@ -120,12 +118,12 @@ void usart3_init(uint32_t bound);
 #ifdef EN_UART4
 /* 句柄 */
 extern UART_HandleTypeDef UART4_Handler;
-    /* 接收buf */
-    #if EN_UART4_RX
+/* 接收buf */
+#if EN_UART4_RX
 extern uint8_t g_uart4_rx_buf[USART_REC_LEN];
 extern uint16_t g_uart4_rx_status;
 extern uint8_t g_uart4_recv_buf[RXBUFFERSIZE];
-    #endif /* EN_UART4_RX */
+#endif /* EN_UART4_RX */
 
 void uart4_init(uint32_t bound);
 #endif /* EN_UART4 */
@@ -142,12 +140,12 @@ void uart4_init(uint32_t bound);
 #ifdef EN_UART5
 /* 句柄 */
 extern UART_HandleTypeDef UART5_Handler;
-    /* 接收buf */
-    #if EN_UART5_RX
+/* 接收buf */
+#if EN_UART5_RX
 extern uint8_t g_uart5_rx_buf[USART_REC_LEN];
 extern uint16_t g_uart5_rx_status;
 extern uint8_t g_uart5_recv_buf[RXBUFFERSIZE];
-    #endif /* EN_UART5_RX */
+#endif /* EN_UART5_RX */
 
 void uart5_init(uint32_t bound);
 #endif /* EN_UART5 */

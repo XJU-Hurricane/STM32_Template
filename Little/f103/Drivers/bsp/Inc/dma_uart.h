@@ -12,9 +12,7 @@
 #define __DMA_UART_H
 
 #include "ring_fifo.h"
-#include "stdlib.h"
 #include "sys.h"
-#include "uart.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -48,24 +46,24 @@ typedef struct {
  */
 
 #ifdef EN_USART1
-    /* 只需要启用宏即可打开DMA传输, 不需要改动代码 */
-    #define USART1_USE_DMA_TX 0
-    #define USART1_USE_DMA_RX 0
+/* 只需要启用宏即可打开DMA传输, 不需要改动代码 */
+#define USART1_USE_DMA_TX 0
+#define USART1_USE_DMA_RX 0
 
-    /* 下面的代码按需改动 */
+/* 下面的代码按需改动 */
 
-    #if USART1_USE_DMA_TX
+#if USART1_USE_DMA_TX
 void usart1_dmatx_init(uint32_t fifo_size, uint32_t buf_size);
-    #endif /* USART1_USE_DMA_TX */
+#endif /* USART1_USE_DMA_TX */
 
-    #if USART1_USE_DMA_RX
-        #if !EN_USART1_RX
-            #error Accept must be enabled USART1 receive first to use DMA receive.
-        #endif /* !EN_USART1_RX */
+#if USART1_USE_DMA_RX
+#if !EN_USART1_RX
+#error Accept must be enabled USART1 receive first to use DMA receive.
+#endif /* !EN_USART1_RX */
 
-        #define USART1_USE_IDLE_IT 1 /* 是否启用空闲中断 */
+#define USART1_USE_IDLE_IT 1 /* 是否启用空闲中断 */
 void usart1_dmarx_init(uint32_t fifo_size, uint32_t buf_size);
-    #endif /* USART1_USE_DMA_RX */
+#endif /* USART1_USE_DMA_RX */
 
 #endif /* EN_USART1 */
 
@@ -79,24 +77,24 @@ void usart1_dmarx_init(uint32_t fifo_size, uint32_t buf_size);
  */
 
 #ifdef EN_USART2
-    /* 只需要启用宏即可打开DMA传输, 不需要改动代码 */
-    #define USART2_USE_DMA_TX 0
-    #define USART2_USE_DMA_RX 0
+/* 只需要启用宏即可打开DMA传输, 不需要改动代码 */
+#define USART2_USE_DMA_TX 0
+#define USART2_USE_DMA_RX 0
 
-    /* 下面的代码按需改动 */
+/* 下面的代码按需改动 */
 
-    #if USART2_USE_DMA_TX
+#if USART2_USE_DMA_TX
 void usart2_dmatx_init(uint32_t fifo_size, uint32_t buf_size);
-    #endif /* USART2_USE_DMA_TX */
+#endif /* USART2_USE_DMA_TX */
 
-    #if USART2_USE_DMA_RX
-        #if !EN_USART2_RX
-            #error Accept must be enabled USART2 receive first to use DMA receive.
-        #endif /* !EN_USART2_RX */
+#if USART2_USE_DMA_RX
+#if !EN_USART2_RX
+#error Accept must be enabled USART2 receive first to use DMA receive.
+#endif /* !EN_USART2_RX */
 
-        #define USART2_USE_IDLE_IT 1 /* 是否启用空闲中断 */
+#define USART2_USE_IDLE_IT 1 /* 是否启用空闲中断 */
 void usart2_dmarx_init(uint32_t fifo_size, uint32_t buf_size);
-    #endif /* USART2_USE_DMA_RX */
+#endif /* USART2_USE_DMA_RX */
 
 #endif /* EN_USART2 */
 
@@ -110,24 +108,24 @@ void usart2_dmarx_init(uint32_t fifo_size, uint32_t buf_size);
  */
 
 #ifdef EN_USART3
-    /* 只需要启用宏即可打开DMA传输, 不需要改动代码 */
-    #define USART3_USE_DMA_TX 0
-    #define USART3_USE_DMA_RX 0
+/* 只需要启用宏即可打开DMA传输, 不需要改动代码 */
+#define USART3_USE_DMA_TX 0
+#define USART3_USE_DMA_RX 0
 
-    /* 下面的代码按需改动 */
+/* 下面的代码按需改动 */
 
-    #if USART3_USE_DMA_TX
+#if USART3_USE_DMA_TX
 void usart3_dmatx_init(uint32_t fifo_size, uint32_t buf_size);
-    #endif /* USART3_USE_DMA_TX */
+#endif /* USART3_USE_DMA_TX */
 
-    #if USART3_USE_DMA_RX
-        #if !EN_USART3_RX
-            #error Accept must be enabled USART3 receive first to use DMA receive.
-        #endif /* !EN_USART3_RX */
+#if USART3_USE_DMA_RX
+#if !EN_USART3_RX
+#error Accept must be enabled USART3 receive first to use DMA receive.
+#endif /* !EN_USART3_RX */
 
-        #define USART3_USE_IDLE_IT 1 /* 是否启用空闲中断 */
+#define USART3_USE_IDLE_IT 1 /* 是否启用空闲中断 */
 void usart3_dmarx_init(uint32_t fifo_size, uint32_t buf_size);
-    #endif /* USART3_USE_DMA_RX */
+#endif /* USART3_USE_DMA_RX */
 
 #endif /* EN_USART3 */
 
@@ -141,24 +139,24 @@ void usart3_dmarx_init(uint32_t fifo_size, uint32_t buf_size);
  */
 
 #ifdef EN_UART4
-    /* 只需要启用宏即可打开DMA传输, 不需要改动代码 */
-    #define UART4_USE_DMA_TX 0
-    #define UART4_USE_DMA_RX 0
+/* 只需要启用宏即可打开DMA传输, 不需要改动代码 */
+#define UART4_USE_DMA_TX 0
+#define UART4_USE_DMA_RX 0
 
-    /* 下面的代码按需改动 */
+/* 下面的代码按需改动 */
 
-    #if UART4_USE_DMA_TX
+#if UART4_USE_DMA_TX
 void uart4_dmatx_init(uint32_t fifo_size, uint32_t buf_size);
-    #endif /* UART4_USE_DMA_TX */
+#endif /* UART4_USE_DMA_TX */
 
-    #if UART4_USE_DMA_RX
-        #if !EN_UART4_RX
-            #error Accept must be enabled UART4 receive first to use DMA receive.
-        #endif /* !EN_UART4_RX */
+#if UART4_USE_DMA_RX
+#if !EN_UART4_RX
+#error Accept must be enabled UART4 receive first to use DMA receive.
+#endif /* !EN_UART4_RX */
 
-        #define UART4_USE_IDLE_IT 1 /* 是否启用空闲中断 */
+#define UART4_USE_IDLE_IT 1 /* 是否启用空闲中断 */
 void uart4_dmarx_init(uint32_t fifo_size, uint32_t buf_size);
-    #endif /* UART4_USE_DMA_RX */
+#endif /* UART4_USE_DMA_RX */
 
 #endif /* EN_UART4 */
 

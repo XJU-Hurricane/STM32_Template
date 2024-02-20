@@ -7,13 +7,14 @@
  */
 
 #include "key.h"
+#include "delay.h"
 
 /**
  * @brief 按键初始化函数
  *
  */
 void key_init(void) {
-    GPIO_InitTypeDef GPIO_Initure;
+    GPIO_InitTypeDef GPIO_Initure = {0};
 
     KEY0_ENABLE();
     KEY1_ENABLE();
@@ -44,7 +45,7 @@ void key_init(void) {
  * @param mode 是否支持连按
  *  0-不支持连按, 1-支持连按
  * @return 按下的按键
- *  @retval 按下:`EY0_PRES ~ WKUP_PRES`
+ *  @retval 按下:`KEY0_PRES ~ WKUP_PRES`
  *  @retval 未按下:`0`
  * @note 注意此函数有响应优先级,`KEY0 > KEY1 > WK_UP`
  */

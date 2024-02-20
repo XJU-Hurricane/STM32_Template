@@ -9,13 +9,9 @@
 #ifndef __MAIN_H
 #define __MAIN_H
 
-#include "delay.h"
-#include "dma_uart.h"
-#include "key.h"
-#include "led.h"
 #include "sys.h"
-#include "uart.h"
 
 int main(void);
+void bsp_init(void);
 
 #endif /* __MAIN_H */

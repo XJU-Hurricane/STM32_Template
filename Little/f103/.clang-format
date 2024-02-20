@@ -8,7 +8,7 @@ ColumnLimit: 80
 # - None: 不缩进
 # - AfterHash: #不缩进, #后面的指示缩进
 # - BeforeHash: #跟前缩进
-IndentPPDirectives: BeforeHash
+IndentPPDirectives: None
 # 指针对齐, 建议Right
 PointerAlignment: Right
 

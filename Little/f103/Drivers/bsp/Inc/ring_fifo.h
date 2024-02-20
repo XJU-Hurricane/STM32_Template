@@ -17,7 +17,10 @@ extern "C" {
 #include <stdlib.h>
 
 /* ring type */
-enum ring_fifo_type { RF_TYPE_FRAME, RF_TYPE_STREAM };
+enum ring_fifo_type {
+    RF_TYPE_FRAME,
+    RF_TYPE_STREAM
+};
 
 /* 环形缓冲区结构 */
 typedef struct {

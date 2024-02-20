@@ -3,6 +3,7 @@
         "*.s": "a251",
         "*.cpp": "cpp",
         "uart.h": "c",
-        "main.h": "c"
+        "main.h": "c",
+        "dma_uart.h": "c"
     }
 }

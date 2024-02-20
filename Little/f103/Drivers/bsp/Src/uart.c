@@ -13,11 +13,13 @@
 
 #include "uart.h"
 #include "dma_uart.h"
+#include "stdarg.h"
+#include "string.h"
 
 /* 如果使用os,则包括下面的头文件即可. */
 #if SYS_SUPPORT_OS
-    #include "os.h" /* os 使用 */
-#endif              /* SYS_SUPPORT_OS */
+#include "os.h" /* os 使用 */
+#endif          /* SYS_SUPPORT_OS */
 
 static uint8_t g_uart_tx_buf[TX_BUF_LEN];
 
@@ -27,9 +29,9 @@ static uint8_t g_uart_tx_buf[TX_BUF_LEN];
  */
 
 #ifdef EN_USART1
-UART_HandleTypeDef g_usart1_handler;
-    #if EN_USART1_RX
-        #if !USART1_USE_DMA_RX
+UART_HandleTypeDef g_usart1_handle;
+#if EN_USART1_RX
+#if !USART1_USE_DMA_RX
 uint8_t g_usart1_rx_buf[USART_REC_LEN];
 /**
  * 接收状态
@@ -38,58 +40,58 @@ uint8_t g_usart1_rx_buf[USART_REC_LEN];
  */
 uint16_t g_usart1_rx_status = 0;
 uint8_t g_usart1_recv_buf[RXBUFFERSIZE];
-        #endif /* !USART1_USE_DMA_RX */
+#endif /* !USART1_USE_DMA_RX */
 /**
  * @brief 串口1中断服务函数
  */
 void USART1_IRQHandler(void) {
-        #if SYS_SUPPORT_OS /* 使用OS */
+#if SYS_SUPPORT_OS /* 使用OS */
     OSIntEnter();
-        #endif /* SYS_SUPPORT_OS */
+#endif /* SYS_SUPPORT_OS */
 
-        #if USART1_USE_IDLE_IT
-    if (__HAL_UART_GET_FLAG(&g_usart1_handler, UART_FLAG_IDLE)) {
-        __HAL_USART_CLEAR_IDLEFLAG(&g_usart1_handler);
-        uart_dmarx_idle_callback(&g_usart1_handler);
+#if USART1_USE_IDLE_IT
+    if (__HAL_UART_GET_FLAG(&g_usart1_handle, UART_FLAG_IDLE)) {
+        __HAL_USART_CLEAR_IDLEFLAG(&g_usart1_handle);
+        uart_dmarx_idle_callback(&g_usart1_handle);
     }
-        #endif /* USART1_USE_IDLE_IT */
+#endif /* USART1_USE_IDLE_IT */
 
-    HAL_UART_IRQHandler(&g_usart1_handler); /* 调用HAL库中断处理公用函数 */
+    HAL_UART_IRQHandler(&g_usart1_handle); /* 调用HAL库中断处理公用函数 */
 
-        #if SYS_SUPPORT_OS /* 使用OS */
+#if SYS_SUPPORT_OS /* 使用OS */
     OSIntExit();
-        #endif /* SYS_SUPPORT_OS */
+#endif /* SYS_SUPPORT_OS */
 }
-    #endif /* EN_USART1_RX */
+#endif /* EN_USART1_RX */
 /**
  * @brief 串口1初始化
  * @param bound 波特率
  */
 void usart1_init(uint32_t bound) {
-    g_usart1_handler.Instance = USART1;
-    g_usart1_handler.Init.BaudRate = bound;
-    g_usart1_handler.Init.WordLength = UART_WORDLENGTH_8B;
-    g_usart1_handler.Init.StopBits = UART_STOPBITS_1;
-    g_usart1_handler.Init.Parity = UART_PARITY_NONE;
-    g_usart1_handler.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-    g_usart1_handler.Init.Mode = UART_MODE_TX_RX;
+    g_usart1_handle.Instance = USART1;
+    g_usart1_handle.Init.BaudRate = bound;
+    g_usart1_handle.Init.WordLength = UART_WORDLENGTH_8B;
+    g_usart1_handle.Init.StopBits = UART_STOPBITS_1;
+    g_usart1_handle.Init.Parity = UART_PARITY_NONE;
+    g_usart1_handle.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+    g_usart1_handle.Init.Mode = UART_MODE_TX_RX;
 
-    HAL_UART_Init(&g_usart1_handler);
+    HAL_UART_Init(&g_usart1_handle);
 
-    #if USART1_USE_DMA_TX
+#if USART1_USE_DMA_TX
     /* 打开DMA发送 */
     usart1_dmatx_init(2048, 128);
-    #endif /* USART1_USE_DMA_TX */
+#endif /* USART1_USE_DMA_TX */
 
-    #if EN_USART1_RX
-        #if USART1_USE_DMA_RX
+#if EN_USART1_RX
+#if USART1_USE_DMA_RX
     /* 使用DMA, 打开DMA接收 */
     usart1_dmarx_init(4096, 128);
-        #else  /* USART1_USE_DMA_RX */
-    HAL_UART_Receive_IT(&g_usart1_handler, (uint8_t *)g_usart1_recv_buf,
+#else  /* USART1_USE_DMA_RX */
+    HAL_UART_Receive_IT(&g_usart1_handle, (uint8_t *)g_usart1_recv_buf,
                         RXBUFFERSIZE);
-        #endif /* USART1_USE_DMA_RX */
-    #endif     /* EN_USART1_RX */
+#endif /* USART1_USE_DMA_RX */
+#endif /* EN_USART1_RX */
 }
 
 #endif /* EN_USART1 */
@@ -104,9 +106,9 @@ void usart1_init(uint32_t bound) {
  */
 
 #ifdef EN_USART2
-UART_HandleTypeDef g_usart2_handler;
-    #if EN_USART2_RX
-        #if !USART2_USE_DMA_RX
+UART_HandleTypeDef g_usart2_handle;
+#if EN_USART2_RX
+#if !USART2_USE_DMA_RX
 uint8_t g_usart2_rx_buf[USART_REC_LEN];
 /**
  * 接收状态
@@ -115,57 +117,57 @@ uint8_t g_usart2_rx_buf[USART_REC_LEN];
  */
 uint16_t g_usart2_rx_status = 0;
 uint8_t g_usart2_recv_buf[RXBUFFERSIZE];
-        #endif /* !USART2_USE_DMA_RX */
+#endif /* !USART2_USE_DMA_RX */
 /**
  * @brief 串口2中断服务函数
  */
 void USART2_IRQHandler(void) {
-        #if SYS_SUPPORT_OS /* 使用OS */
+#if SYS_SUPPORT_OS /* 使用OS */
     OSIntEnter();
-        #endif /* SYS_SUPPORT_OS */
+#endif /* SYS_SUPPORT_OS */
 
-        #if USART2_USE_IDLE_IT
-    if (__HAL_UART_GET_FLAG(&g_usart2_handler, UART_FLAG_IDLE)) {
-        __HAL_USART_CLEAR_IDLEFLAG(&g_usart2_handler);
-        uart_dmarx_idle_callback(&g_usart2_handler);
+#if USART2_USE_IDLE_IT
+    if (__HAL_UART_GET_FLAG(&g_usart2_handle, UART_FLAG_IDLE)) {
+        __HAL_USART_CLEAR_IDLEFLAG(&g_usart2_handle);
+        uart_dmarx_idle_callback(&g_usart2_handle);
     }
-        #endif /* USART2_USE_IDLE_IT */
+#endif /* USART2_USE_IDLE_IT */
 
-    HAL_UART_IRQHandler(&g_usart2_handler); /* 调用HAL库中断处理公用函数 */
+    HAL_UART_IRQHandler(&g_usart2_handle); /* 调用HAL库中断处理公用函数 */
 
-        #if SYS_SUPPORT_OS /* 使用OS */
+#if SYS_SUPPORT_OS /* 使用OS */
     OSIntExit();
-        #endif /* SYS_SUPPORT_OS */
+#endif /* SYS_SUPPORT_OS */
 }
-    #endif /* EN_USART2_RX */
+#endif /* EN_USART2_RX */
 /**
  * @brief 串口2初始化
  * @param bound 波特率
  */
 void usart2_init(uint32_t bound) {
-    g_usart2_handler.Instance = USART2;
-    g_usart2_handler.Init.BaudRate = bound;
-    g_usart2_handler.Init.WordLength = UART_WORDLENGTH_8B;
-    g_usart2_handler.Init.StopBits = UART_STOPBITS_1;
-    g_usart2_handler.Init.Parity = UART_PARITY_NONE;
-    g_usart2_handler.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-    g_usart2_handler.Init.Mode = UART_MODE_TX_RX;
-    HAL_UART_Init(&g_usart2_handler);
+    g_usart2_handle.Instance = USART2;
+    g_usart2_handle.Init.BaudRate = bound;
+    g_usart2_handle.Init.WordLength = UART_WORDLENGTH_8B;
+    g_usart2_handle.Init.StopBits = UART_STOPBITS_1;
+    g_usart2_handle.Init.Parity = UART_PARITY_NONE;
+    g_usart2_handle.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+    g_usart2_handle.Init.Mode = UART_MODE_TX_RX;
+    HAL_UART_Init(&g_usart2_handle);
 
-    #if USART2_USE_DMA_TX
+#if USART2_USE_DMA_TX
     /* 打开DMA发送 */
     usart2_dmatx_init(2048, 128);
-    #endif /* USART2_USE_DMA_TX */
+#endif /* USART2_USE_DMA_TX */
 
-    #if EN_USART2_RX
-        #if USART2_USE_DMA_RX
+#if EN_USART2_RX
+#if USART2_USE_DMA_RX
     /* 使用DMA, 打开DMA接收 */
     usart2_dmarx_init(4096, 128);
-        #else  /* USART2_USE_DMA_RX */
-    HAL_UART_Receive_IT(&g_usart2_handler, (uint8_t *)g_usart2_recv_buf,
+#else  /* USART2_USE_DMA_RX */
+    HAL_UART_Receive_IT(&g_usart2_handle, (uint8_t *)g_usart2_recv_buf,
                         RXBUFFERSIZE);
-        #endif /* USART2_USE_DMA_RX */
-    #endif     /* EN_USART2_RX */
+#endif /* USART2_USE_DMA_RX */
+#endif /* EN_USART2_RX */
 }
 #endif /* EN_USART2 */
 
@@ -179,9 +181,9 @@ void usart2_init(uint32_t bound) {
  */
 
 #ifdef EN_USART3
-UART_HandleTypeDef g_usart3_handler;
-    #if EN_USART3_RX
-        #if !USART3_USE_DMA_RX
+UART_HandleTypeDef g_usart3_handle;
+#if EN_USART3_RX
+#if !USART3_USE_DMA_RX
 uint8_t g_usart3_rx_buf[USART_REC_LEN];
 /**
  * 接收状态
@@ -190,57 +192,57 @@ uint8_t g_usart3_rx_buf[USART_REC_LEN];
  */
 uint16_t g_usart3_rx_status = 0;
 uint8_t g_usart3_recv_buf[RXBUFFERSIZE];
-        #endif /* !USART3_USE_DMA_RX */
+#endif /* !USART3_USE_DMA_RX */
 /**
  * @brief 串口3中断服务函数
  */
 void USART3_IRQHandler(void) {
-        #if SYS_SUPPORT_OS /* 使用OS */
+#if SYS_SUPPORT_OS /* 使用OS */
     OSIntEnter();
-        #endif /* SYS_SUPPORT_OS */
+#endif /* SYS_SUPPORT_OS */
 
-        #if USART3_USE_IDLE_IT
-    if (__HAL_UART_GET_FLAG(&g_usart3_handler, UART_FLAG_IDLE)) {
-        __HAL_USART_CLEAR_IDLEFLAG(&g_usart3_handler);
-        uart_dmarx_idle_callback(&g_usart3_handler);
+#if USART3_USE_IDLE_IT
+    if (__HAL_UART_GET_FLAG(&g_usart3_handle, UART_FLAG_IDLE)) {
+        __HAL_USART_CLEAR_IDLEFLAG(&g_usart3_handle);
+        uart_dmarx_idle_callback(&g_usart3_handle);
     }
-        #endif /* USART3_USE_IDLE_IT */
+#endif /* USART3_USE_IDLE_IT */
 
-    HAL_UART_IRQHandler(&g_usart3_handler); /* 调用HAL库中断处理公用函数 */
+    HAL_UART_IRQHandler(&g_usart3_handle); /* 调用HAL库中断处理公用函数 */
 
-        #if SYS_SUPPORT_OS /* 使用OS */
+#if SYS_SUPPORT_OS /* 使用OS */
     OSIntExit();
-        #endif /* SYS_SUPPORT_OS */
+#endif /* SYS_SUPPORT_OS */
 }
-    #endif /* EN_USART3_RX */
+#endif /* EN_USART3_RX */
 /**
  * @brief 串口3初始化
  * @param bound 波特率
  */
 void usart3_init(uint32_t bound) {
-    g_usart3_handler.Instance = USART3;
-    g_usart3_handler.Init.BaudRate = bound;
-    g_usart3_handler.Init.WordLength = UART_WORDLENGTH_8B;
-    g_usart3_handler.Init.StopBits = UART_STOPBITS_1;
-    g_usart3_handler.Init.Parity = UART_PARITY_NONE;
-    g_usart3_handler.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-    g_usart3_handler.Init.Mode = UART_MODE_TX_RX;
-    HAL_UART_Init(&g_usart3_handler);
+    g_usart3_handle.Instance = USART3;
+    g_usart3_handle.Init.BaudRate = bound;
+    g_usart3_handle.Init.WordLength = UART_WORDLENGTH_8B;
+    g_usart3_handle.Init.StopBits = UART_STOPBITS_1;
+    g_usart3_handle.Init.Parity = UART_PARITY_NONE;
+    g_usart3_handle.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+    g_usart3_handle.Init.Mode = UART_MODE_TX_RX;
+    HAL_UART_Init(&g_usart3_handle);
 
-    #if USART3_USE_DMA_TX
+#if USART3_USE_DMA_TX
     /* 打开DMA发送 */
     usart3_dmatx_init(2048, 128);
-    #endif /* USART3_USE_DMA_TX */
+#endif /* USART3_USE_DMA_TX */
 
-    #if EN_USART3_RX
-        #if USART3_USE_DMA_RX
+#if EN_USART3_RX
+#if USART3_USE_DMA_RX
     /* 使用DMA, 打开DMA接收 */
     usart3_dmarx_init(4096, 128);
-        #else  /* USART3_USE_DMA_RX */
-    HAL_UART_Receive_IT(&g_usart3_handler, (uint8_t *)g_usart3_recv_buf,
+#else  /* USART3_USE_DMA_RX */
+    HAL_UART_Receive_IT(&g_usart3_handle, (uint8_t *)g_usart3_recv_buf,
                         RXBUFFERSIZE);
-        #endif /* USART3_USE_DMA_RX */
-    #endif     /* EN_USART3_RX */
+#endif /* USART3_USE_DMA_RX */
+#endif /* EN_USART3_RX */
 }
 #endif /* EN_USART3 */
 
@@ -255,8 +257,8 @@ void usart3_init(uint32_t bound) {
 
 #ifdef EN_UART4
 UART_HandleTypeDef UART4_Handler;
-    #if EN_UART4_RX
-        #if !UART4_USE_DMA_RX
+#if EN_UART4_RX
+#if !UART4_USE_DMA_RX
 uint8_t g_uart4_rx_buf[USART_REC_LEN];
 /**
  * 接收状态
@@ -265,29 +267,29 @@ uint8_t g_uart4_rx_buf[USART_REC_LEN];
  */
 uint16_t g_uart4_rx_status = 0;
 uint8_t g_uart4_recv_buf[RXBUFFERSIZE];
-        #endif /* !UART4_USE_DMA_RX */
+#endif /* !UART4_USE_DMA_RX */
 /**
  * @brief 串口4中断服务函数
  */
 void UART4_IRQHandler(void) {
-        #if SYS_SUPPORT_OS /* 使用OS */
+#if SYS_SUPPORT_OS /* 使用OS */
     OSIntEnter();
-        #endif /* SYS_SUPPORT_OS */
+#endif /* SYS_SUPPORT_OS */
 
-        #if UART4_USE_IDLE_IT
+#if UART4_USE_IDLE_IT
     if (__HAL_UART_GET_FLAG(&UART4_Handler, UART_FLAG_IDLE)) {
         __HAL_USART_CLEAR_IDLEFLAG(&UART4_Handler);
         uart_dmarx_idle_callback(&UART4_Handler);
     }
-        #endif /* UART4_USE_IDLE_IT */
+#endif /* UART4_USE_IDLE_IT */
 
     HAL_UART_IRQHandler(&UART4_Handler); /* 调用HAL库中断处理公用函数 */
 
-        #if SYS_SUPPORT_OS /* 使用OS */
+#if SYS_SUPPORT_OS /* 使用OS */
     OSIntExit();
-        #endif /* SYS_SUPPORT_OS */
+#endif /* SYS_SUPPORT_OS */
 }
-    #endif /* EN_UART4_RX */
+#endif /* EN_UART4_RX */
 /**
  * @brief 串口4初始化
  * @param bound 波特率
@@ -302,20 +304,20 @@ void uart4_init(uint32_t bound) {
     UART4_Handler.Init.Mode = UART_MODE_TX_RX;
     HAL_UART_Init(&UART4_Handler);
 
-    #if UART4_USE_DMA_TX
+#if UART4_USE_DMA_TX
     /* 打开DMA发送 */
     uart4_dmatx_init(2048, 128);
-    #endif /* UART4_USE_DMA_TX */
+#endif /* UART4_USE_DMA_TX */
 
-    #if EN_UART4_RX
-        #if UART4_USE_DMA_RX
+#if EN_UART4_RX
+#if UART4_USE_DMA_RX
     /* 使用DMA, 打开DMA接收 */
     uart4_dmarx_init(4096, 128);
-        #else  /* UART4_USE_DMA_RX */
+#else  /* UART4_USE_DMA_RX */
     HAL_UART_Receive_IT(&UART4_Handler, (uint8_t *)g_uart4_recv_buf,
                         RXBUFFERSIZE);
-        #endif /* UART4_USE_DMA_RX */
-    #endif     /* EN_UART4_RX */
+#endif /* UART4_USE_DMA_RX */
+#endif /* EN_UART4_RX */
 }
 #endif /* EN_UART4 */
 
@@ -330,7 +332,7 @@ void uart4_init(uint32_t bound) {
 
 #ifdef EN_UART5
 UART_HandleTypeDef UART5_Handler;
-    #if EN_UART5_RX
+#if EN_UART5_RX
 uint8_t g_uart5_rx_buf[USART_REC_LEN];
 /**
  * 接收状态
@@ -343,17 +345,17 @@ uint8_t g_uart5_recv_buf[RXBUFFERSIZE];
  * @brief 串口5中断服务函数
  */
 void UART5_IRQHandler(void) {
-        #if SYS_SUPPORT_OS /* 使用OS */
+#if SYS_SUPPORT_OS /* 使用OS */
     OSIntEnter();
-        #endif /* SYS_SUPPORT_OS */
+#endif /* SYS_SUPPORT_OS */
 
     HAL_UART_IRQHandler(&UART5_Handler); /* 调用HAL库中断处理公用函数 */
 
-        #if SYS_SUPPORT_OS /* 使用OS */
+#if SYS_SUPPORT_OS /* 使用OS */
     OSIntExit();
-        #endif /* SYS_SUPPORT_OS */
+#endif /* SYS_SUPPORT_OS */
 }
-    #endif /* EN_UART5_RX */
+#endif /* EN_UART5_RX */
 /**
  * @brief 串口5初始化
  * @param bound 波特率
@@ -367,10 +369,10 @@ void uart5_init(uint32_t bound) {
     UART5_Handler.Init.HwFlowCtl = UART_HWCONTROL_NONE;
     UART5_Handler.Init.Mode = UART_MODE_TX_RX;
     HAL_UART_Init(&UART5_Handler);
-    #if EN_UART5_RX
+#if EN_UART5_RX
     HAL_UART_Receive_IT(&UART5_Handler, (uint8_t *)g_uart5_recv_buf,
                         RXBUFFERSIZE);
-    #endif /* EN_UART5_RX */
+#endif /* EN_UART5_RX */
 }
 #endif /* EN_UART5 */
 
@@ -389,7 +391,7 @@ void uart5_init(uint32_t bound) {
  * @param huart 串口句柄
  */
 void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
-    GPIO_InitTypeDef GPIO_Initure;
+    GPIO_InitTypeDef GPIO_Initure = {0};
     if (huart->Instance == USART1) {
         __HAL_RCC_GPIOA_CLK_ENABLE();
         __HAL_RCC_USART1_CLK_ENABLE();
@@ -497,7 +499,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
     /* 如果要使用某个串口的接收中断,请在头文件定义 */
     if (huart->Instance == USART1) {
 #if EN_USART1_RX
-    #if !USART1_USE_DMA_RX
+#if !USART1_USE_DMA_RX
         /**
          * 以下用于测试中断回调是否有问题,根据实际情况修改
          * 也可以将接收写在中断服务函数中
@@ -517,7 +519,8 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
                 if (g_usart1_recv_buf[0] == 0x0d) {
                     g_usart1_rx_status |= 0x4000;
                 } else {
-                    g_usart1_rx_buf[g_usart1_rx_status & 0X3FFF] = g_usart1_recv_buf[0];
+                    g_usart1_rx_buf[g_usart1_rx_status & 0X3FFF] =
+                        g_usart1_recv_buf[0];
                     g_usart1_rx_status++;
                     if (g_usart1_rx_status > (USART_REC_LEN - 1)) {
                         g_usart1_rx_status = 0; /* 接收数据错误,重新开始接收 */
@@ -525,9 +528,9 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
                 }
             }
         }
-        HAL_UART_Receive_IT(&g_usart1_handler, (uint8_t *)g_usart1_recv_buf,
+        HAL_UART_Receive_IT(&g_usart1_handle, (uint8_t *)g_usart1_recv_buf,
                             RXBUFFERSIZE);
-    #else  /* !USART1_USE_DMA_RX */
+#else  /* !USART1_USE_DMA_RX */
         uart_dmarx_done_callback(huart);
         if (huart->hdmarx->Init.Mode != DMA_CIRCULAR) {
             while (HAL_UART_Receive_DMA(huart, huart->pRxBuffPtr,
@@ -535,11 +538,11 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
                 __HAL_UNLOCK(huart);
             }
         }
-    #endif /* !USART1_USE_DMA_RX */
-#endif     /* EN_USART1_RX */
+#endif /* !USART1_USE_DMA_RX */
+#endif /* EN_USART1_RX */
     } else if (huart->Instance == USART2) {
 #if EN_USART2_RX
-    #if !USART2_USE_DMA_RX
+#if !USART2_USE_DMA_RX
         /**
          * 以下用于测试中断回调是否有问题,根据实际情况修改
          * 也可以将接收写在中断服务函数中
@@ -559,7 +562,8 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
                 if (g_usart2_recv_buf[0] == 0x0d) {
                     g_usart2_rx_status |= 0x4000;
                 } else {
-                    g_usart2_rx_buf[g_usart2_rx_status & 0X3FFF] = g_usart2_recv_buf[0];
+                    g_usart2_rx_buf[g_usart2_rx_status & 0X3FFF] =
+                        g_usart2_recv_buf[0];
                     g_usart2_rx_status++;
                     if (g_usart2_rx_status > (USART_REC_LEN - 1)) {
                         g_usart2_rx_status = 0; /* 接收数据错误,重新开始接收 */
@@ -567,9 +571,9 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
                 }
             }
         }
-        HAL_UART_Receive_IT(&g_usart2_handler, (uint8_t *)g_usart2_recv_buf,
+        HAL_UART_Receive_IT(&g_usart2_handle, (uint8_t *)g_usart2_recv_buf,
                             RXBUFFERSIZE);
-    #else  /* !USART2_USE_DMA_RX */
+#else  /* !USART2_USE_DMA_RX */
         uart_dmarx_done_callback(huart);
         if (huart->hdmarx->Init.Mode != DMA_CIRCULAR) {
             while (HAL_UART_Receive_DMA(huart, huart->pRxBuffPtr,
@@ -577,11 +581,11 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
                 __HAL_UNLOCK(huart);
             }
         }
-    #endif /* !USART2_USE_DMA_RX */
-#endif     /* EN_USART2_RX */
+#endif /* !USART2_USE_DMA_RX */
+#endif /* EN_USART2_RX */
     } else if (huart->Instance == USART3) {
 #if EN_USART3_RX
-    #if !USART3_USE_DMA_RX
+#if !USART3_USE_DMA_RX
         /**
          * 以下用于测试中断回调是否有问题,根据实际情况修改
          * 也可以将接收写在中断服务函数中
@@ -601,7 +605,8 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
                 if (g_usart3_recv_buf[0] == 0x0d) {
                     g_usart3_rx_status |= 0x4000;
                 } else {
-                    g_usart3_rx_buf[g_usart3_rx_status & 0X3FFF] = g_usart3_recv_buf[0];
+                    g_usart3_rx_buf[g_usart3_rx_status & 0X3FFF] =
+                        g_usart3_recv_buf[0];
                     g_usart3_rx_status++;
                     if (g_usart3_rx_status > (USART_REC_LEN - 1)) {
                         g_usart3_rx_status = 0; /* 接收数据错误,重新开始接收 */
@@ -609,9 +614,9 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
                 }
             }
         }
-        HAL_UART_Receive_IT(&g_usart3_handler, (uint8_t *)g_usart3_recv_buf,
+        HAL_UART_Receive_IT(&g_usart3_handle, (uint8_t *)g_usart3_recv_buf,
                             RXBUFFERSIZE);
-    #else  /* !USART3_USE_DMA_RX */
+#else  /* !USART3_USE_DMA_RX */
         uart_dmarx_done_callback(huart);
         if (huart->hdmarx->Init.Mode != DMA_CIRCULAR) {
             while (HAL_UART_Receive_DMA(huart, huart->pRxBuffPtr,
@@ -619,11 +624,11 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
                 __HAL_UNLOCK(huart);
             }
         }
-    #endif /* !USART3_USE_DMA_RX */
-#endif     /* EN_USART3_RX */
+#endif /* !USART3_USE_DMA_RX */
+#endif /* EN_USART3_RX */
     } else if (huart->Instance == UART4) {
 #if EN_UART4_RX
-    #if !UART4_USE_DMA_RX
+#if !UART4_USE_DMA_RX
         /**
          * 以下用于测试中断回调是否有问题,根据实际情况修改
          * 也可以将接收写在中断服务函数中
@@ -643,7 +648,8 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
                 if (g_uart4_recv_buf[0] == 0x0d) {
                     g_uart4_rx_status |= 0x4000;
                 } else {
-                    g_uart4_rx_buf[g_uart4_rx_status & 0X3FFF] = g_uart4_recv_buf[0];
+                    g_uart4_rx_buf[g_uart4_rx_status & 0X3FFF] =
+                        g_uart4_recv_buf[0];
                     g_uart4_rx_status++;
                     if (g_uart4_rx_status > (USART_REC_LEN - 1)) {
                         g_uart4_rx_status = 0; /* 接收数据错误,重新开始接收 */
@@ -653,7 +659,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
         }
         HAL_UART_Receive_IT(&UART4_Handler, (uint8_t *)g_uart4_recv_buf,
                             RXBUFFERSIZE);
-    #else  /* !UART4_USE_DMA_RX */
+#else  /* !UART4_USE_DMA_RX */
         uart_dmarx_done_callback(huart);
         if (huart->hdmarx->Init.Mode != DMA_CIRCULAR) {
             while (HAL_UART_Receive_DMA(huart, huart->pRxBuffPtr,
@@ -661,8 +667,8 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
                 __HAL_UNLOCK(huart);
             }
         }
-    #endif /* !UART4_USE_DMA_RX */
-#endif     /* EN_UART4_RX */
+#endif /* !UART4_USE_DMA_RX */
+#endif /* EN_UART4_RX */
     } else if (huart->Instance == UART5) {
 #if EN_UART5_RX
         if ((g_uart5_rx_status & 0x8000) == 0) {
@@ -679,7 +685,8 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
                 if (g_uart5_recv_buf[0] == 0x0d) {
                     g_uart5_rx_status |= 0x4000;
                 } else {
-                    g_uart5_rx_buf[g_uart5_rx_status & 0X3FFF] = g_uart5_recv_buf[0];
+                    g_uart5_rx_buf[g_uart5_rx_status & 0X3FFF] =
+                        g_uart5_recv_buf[0];
                     g_uart5_rx_status++;
                     if (g_uart5_rx_status > (USART_REC_LEN - 1)) {
                         g_uart5_rx_status = 0; /* 接收数据错误,重新开始接收 */
@@ -783,22 +790,22 @@ void uart_print(UART_HandleTypeDef *huart, const char *__format, ...) {
  */
 
 #ifdef EN_USART1
-    #if defined(__ARMCC_VERSION) /* Compiler */
+#if defined(__ARMCC_VERSION) /* Compiler */
 
-        #if (__ARMCC_VERSION >= 6010050) /* 使用AC6编译器时 */
+#if (__ARMCC_VERSION >= 6010050) /* 使用AC6编译器时 */
 
 __asm(".global __use_no_semihosting\n\t"); /* 声明不使用半主机模式 */
 /* AC6下需要声明main函数为无参数格式，否则部分例程可能出现半主机模式 */
 __asm(".global __ARM_use_no_argv \n\t");
 
-        #elif ((__ARMCC_VERSION >= 5000000) &&                                 \
-               (__ARMCC_VERSION < 6000000)) /* 使用AC5编译器 */
-        /* 使用AC5编译器时, 要在这里定义__FILE 和 不使用半主机模式 */
+#elif ((__ARMCC_VERSION >= 5000000) &&                                         \
+       (__ARMCC_VERSION < 6000000)) /* 使用AC5编译器 */
+/* 使用AC5编译器时, 要在这里定义__FILE 和 不使用半主机模式 */
 
-        /* 关闭多字节警告 */
-            #pragma diag_suppress 870
+/* 关闭多字节警告 */
+#pragma diag_suppress 870
 
-            #pragma import(__use_no_semihosting)
+#pragma import(__use_no_semihosting)
 
 struct __FILE {
     int handle;
@@ -806,7 +813,7 @@ struct __FILE {
     /* standard output using printf() for debugging, no file handling */
     /* is required. */
 };
-        #endif /* __ARMCC_VERSION */
+#endif /* __ARMCC_VERSION */
 /* 不使用半主机模式，至少需要重定义_ttywrch\_sys_exit\_sys_command_string函数,以同时兼容AC6和AC5模式
  */
 int _ttywrch(int ch) {
@@ -834,13 +841,13 @@ int fputc(int ch, FILE *f) {
     return ch;
 }
 
-    #elif (defined(__GNUC__))                /* 使用ARM GCC编译器 */
+#elif (defined(__GNUC__))            /* 使用ARM GCC编译器 */
 
-    /* 使用ARM GCC需要添加-u _printf_float以支持浮点数 */
-        #pragma import(__use_no_semihosting) /* 不适用半主机模式 */
+/* 使用ARM GCC需要添加-u _printf_float以支持浮点数 */
+#pragma import(__use_no_semihosting) /* 不适用半主机模式 */
 /*重新定义__write函数*/
 int _write(int fd, char *ptr, int len) {
-    HAL_UART_Transmit(&g_usart1_handler, (uint8_t *)ptr, len, 0xFFFF);
+    HAL_UART_Transmit(&g_usart1_handle, (uint8_t *)ptr, len, 0xFFFF);
     return len;
 }
 
@@ -849,6 +856,6 @@ void _sys_exit(int x) {
     x = x;
 }
 
-    #endif /* Compiler */
+#endif /* Compiler */
 
 #endif /* EN_USART1 */

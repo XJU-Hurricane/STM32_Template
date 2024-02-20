@@ -13,7 +13,7 @@
  *
  */
 void led_init(void) {
-    GPIO_InitTypeDef GPIO_Initure;
+    GPIO_InitTypeDef GPIO_Initure = {0};
 
     LED0_ENABLE();
     LED1_ENABLE();

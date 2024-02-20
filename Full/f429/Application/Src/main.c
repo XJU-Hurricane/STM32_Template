@@ -7,6 +7,11 @@
  */
 
 #include "main.h"
+#include "delay.h"
+#include "dma_uart.h"
+#include "key.h"
+#include "led.h"
+#include "uart.h"
 
 /**
  * @brief 串口压力测试
@@ -17,25 +22,12 @@ void uart_stress(void) {
     uint32_t len = 0;
 
     while (1) {
-        uart_dmatx_send(&g_usart1_handler);
-        len = uart_dmarx_read(&g_usart1_handler, buf, sizeof(buf));
+        uart_dmatx_send(&g_usart1_handle);
+        len = uart_dmarx_read(&g_usart1_handle, buf, sizeof(buf));
         if (len > 0) {
-            uart_dmatx_write(&g_usart1_handler, buf, len);
+            uart_dmatx_write(&g_usart1_handle, buf, len);
         }
     }
-}
-
-/**
- * @brief 板层驱动初始化
- * 
- */
-void bsp_init(void) {
-    HAL_Init();                          /* 初始化HAL库 */
-    sys_stm32_clock_init(360, 25, 2, 8); /* 初始化时钟, 180MHz */
-    delay_init(180);                     /* 初始化延时 */
-    usart1_init(115200);                 /* 串口1初始化 */
-    led_init();                          /* LED初始化 */
-    key_init();                          /* 按键初始化 */
 }
 
 /**
@@ -55,9 +47,9 @@ int main(void) {
             /* 得到此次接收到的数据长度 */
             uint16_t len = g_usart1_rx_status & (uint16_t)0x3fff;
             printf("您发送的消息为:\r\n\033[32m");
-            HAL_UART_Transmit(&g_usart1_handler, (uint8_t *)g_usart1_rx_buf,
+            HAL_UART_Transmit(&g_usart1_handle, (uint8_t *)g_usart1_rx_buf,
                               len, 1000); /* 发送接收到的数据 */
-            while (__HAL_UART_GET_FLAG(&g_usart1_handler, UART_FLAG_TC) != SET)
+            while (__HAL_UART_GET_FLAG(&g_usart1_handle, UART_FLAG_TC) != SET)
                 ;                   /* 等待发送结束 */
             printf("\033[39m\r\n"); /* 插入换行 */
             g_usart1_rx_status = 0;
@@ -88,4 +80,17 @@ int main(void) {
         ++times;
         delay_ms(10);
     }
+}
+
+/**
+ * @brief 板层驱动初始化
+ * 
+ */
+void bsp_init(void) {
+    HAL_Init();                          /* 初始化HAL库 */
+    sys_stm32_clock_init(360, 25, 2, 8); /* 初始化时钟, 180MHz */
+    delay_init(180);                     /* 初始化延时 */
+    usart1_init(115200);                 /* 串口1初始化 */
+    led_init();                          /* LED初始化 */
+    key_init();                          /* 按键初始化 */
 }

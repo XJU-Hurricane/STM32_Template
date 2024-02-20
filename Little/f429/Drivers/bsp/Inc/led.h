@@ -9,8 +9,6 @@
 #ifndef __LED_H
 #define __LED_H
 
-#include "stdarg.h"
-#include "string.h"
 #include "sys.h"
 
 /* LED0定义 */

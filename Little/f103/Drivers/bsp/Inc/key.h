@@ -8,7 +8,6 @@
 #ifndef __KEY_H
 #define __KEY_H
 
-#include "delay.h"
 #include "sys.h"
 
 /* KEY0定义 */

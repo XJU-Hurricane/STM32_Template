@@ -6,6 +6,7 @@
  * @date    2023-10-20
  */
 
+#include "delay.h"
 #include "key.h"
 
 /**
@@ -13,7 +14,7 @@
  *
  */
 void key_init(void) {
-    GPIO_InitTypeDef GPIO_Initure;
+    GPIO_InitTypeDef GPIO_Initure = {0};
 
     KEY0_ENABLE();
     KEY1_ENABLE();

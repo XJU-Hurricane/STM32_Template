@@ -1,5 +1,5 @@
 /**
- * @file    usart.c
+ * @file    uart.h
  * @author  Deadline039
  * @version 1.0
  * @date    2023-07-24

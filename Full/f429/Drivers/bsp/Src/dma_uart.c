@@ -9,6 +9,7 @@
  * @see     https://gitee.com/wei513723/stm32-stable-uart-transmit-receive
  */
 
+#include "dma_uart.h"
 #include "stdlib.h"
 #include "sys.h"
 #include "uart.h"

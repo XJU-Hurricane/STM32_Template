@@ -4,8 +4,8 @@
  * @brief   Software versioning
  * @version 0.1
  * @date    2024-02-20
- * @note    You should modify the verison when you are release.
- *          Include This file and use `get_version_major, get_version minor,
+ * @note    You should modify the verison when you are releasing.
+ *          Include This file and use `get_version_major, get_version_minor,
  *          get_version_patch, get_version_info` to get the software version
  *          number and release information.
  */
@@ -14,7 +14,7 @@
 #define __VERSION_H
 
 #define VERSION_MAJOR  0 /* Major Version Number */
-#define VERSION_MINJOR 1 /* Minjor Version Number */
+#define VERSION_MINOR 1 /* Minjor Version Number */
 #define VERSION_PATCH  0 /* Patch Number */
 
 /* The information about this version, such as bug fix, new feature */
@@ -30,12 +30,12 @@ static inline int get_version_major(void) {
 }
 
 /**
- * @brief Get the minjor version number.
+ * @brief Get the minor version number.
  *
- * @return `int` The minjor version number
+ * @return `int` The minor version number
  */
-static inline int get_version_minjor(void) {
-    return VERSION_MINJOR;
+static inline int get_version_minor(void) {
+    return VERSION_MINOR;
 }
 
 /**

@@ -39,7 +39,7 @@ uint8_t g_usart1_rx_buf[USART_REC_LEN];
  * bit13~0: 接收到的有效字节数目
  */
 uint16_t g_usart1_rx_status = 0;
-uint8_t g_usart1_recv_buf[RXBUFFERSIZE];
+static uint8_t g_usart1_recv_it_buf[RECV_IT_BUF_SIZE];
 #endif /* !USART1_USE_DMA_RX */
 /**
  * @brief 串口1中断服务函数
@@ -88,8 +88,8 @@ void usart1_init(uint32_t bound) {
     /* 使用DMA, 打开DMA接收 */
     usart1_dmarx_init(4096, 128);
 #else  /* USART1_USE_DMA_RX */
-    HAL_UART_Receive_IT(&g_usart1_handle, (uint8_t *)g_usart1_recv_buf,
-                        RXBUFFERSIZE);
+    HAL_UART_Receive_IT(&g_usart1_handle, (uint8_t *)g_usart1_recv_it_buf,
+                        RECV_IT_BUF_SIZE);
 #endif /* USART1_USE_DMA_RX */
 #endif /* EN_USART1_RX */
 }
@@ -116,7 +116,7 @@ uint8_t g_usart2_rx_buf[USART_REC_LEN];
  * bit13~0: 接收到的有效字节数目
  */
 uint16_t g_usart2_rx_status = 0;
-uint8_t g_usart2_recv_buf[RXBUFFERSIZE];
+static uint8_t g_usart2_recv_it_buf[RECV_IT_BUF_SIZE];
 #endif /* !USART2_USE_DMA_RX */
 /**
  * @brief 串口2中断服务函数
@@ -164,8 +164,8 @@ void usart2_init(uint32_t bound) {
     /* 使用DMA, 打开DMA接收 */
     usart2_dmarx_init(4096, 128);
 #else  /* USART2_USE_DMA_RX */
-    HAL_UART_Receive_IT(&g_usart2_handle, (uint8_t *)g_usart2_recv_buf,
-                        RXBUFFERSIZE);
+    HAL_UART_Receive_IT(&g_usart2_handle, (uint8_t *)g_usart2_recv_it_buf,
+                        RECV_IT_BUF_SIZE);
 #endif /* USART2_USE_DMA_RX */
 #endif /* EN_USART2_RX */
 }
@@ -191,7 +191,7 @@ uint8_t g_usart3_rx_buf[USART_REC_LEN];
  * bit13~0: 接收到的有效字节数目
  */
 uint16_t g_usart3_rx_status = 0;
-uint8_t g_usart3_recv_buf[RXBUFFERSIZE];
+static uint8_t g_usart3_recv_it_buf[RECV_IT_BUF_SIZE];
 #endif /* !USART3_USE_DMA_RX */
 /**
  * @brief 串口3中断服务函数
@@ -239,8 +239,8 @@ void usart3_init(uint32_t bound) {
     /* 使用DMA, 打开DMA接收 */
     usart3_dmarx_init(4096, 128);
 #else  /* USART3_USE_DMA_RX */
-    HAL_UART_Receive_IT(&g_usart3_handle, (uint8_t *)g_usart3_recv_buf,
-                        RXBUFFERSIZE);
+    HAL_UART_Receive_IT(&g_usart3_handle, (uint8_t *)g_usart3_recv_it_buf,
+                        RECV_IT_BUF_SIZE);
 #endif /* USART3_USE_DMA_RX */
 #endif /* EN_USART3_RX */
 }
@@ -266,7 +266,7 @@ uint8_t g_uart4_rx_buf[USART_REC_LEN];
  * bit13~0: 接收到的有效字节数目
  */
 uint16_t g_uart4_rx_status = 0;
-uint8_t g_uart4_recv_buf[RXBUFFERSIZE];
+static uint8_t g_uart4_recv_buf[RECV_IT_BUF_SIZE];
 #endif /* !UART4_USE_DMA_RX */
 /**
  * @brief 串口4中断服务函数
@@ -315,7 +315,7 @@ void uart4_init(uint32_t bound) {
     uart4_dmarx_init(4096, 128);
 #else  /* UART4_USE_DMA_RX */
     HAL_UART_Receive_IT(&UART4_Handler, (uint8_t *)g_uart4_recv_buf,
-                        RXBUFFERSIZE);
+                        RECV_IT_BUF_SIZE);
 #endif /* UART4_USE_DMA_RX */
 #endif /* EN_UART4_RX */
 }
@@ -340,7 +340,7 @@ uint8_t g_uart5_rx_buf[USART_REC_LEN];
  * bit13~0: 接收到的有效字节数目
  */
 uint16_t g_uart5_rx_status = 0;
-uint8_t g_uart5_recv_buf[RXBUFFERSIZE];
+static uint8_t g_uart5_recv_buf[RECV_IT_BUF_SIZE];
 /**
  * @brief 串口5中断服务函数
  */
@@ -371,7 +371,7 @@ void uart5_init(uint32_t bound) {
     HAL_UART_Init(&UART5_Handler);
 #if EN_UART5_RX
     HAL_UART_Receive_IT(&UART5_Handler, (uint8_t *)g_uart5_recv_buf,
-                        RXBUFFERSIZE);
+                        RECV_IT_BUF_SIZE);
 #endif /* EN_UART5_RX */
 }
 #endif /* EN_UART5 */
@@ -508,7 +508,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
             /* 接收未完成 */
             if (g_usart1_rx_status & 0x4000) {
                 /* 接收到了0x0d(即\r) */
-                if (g_usart1_recv_buf[0] != 0x0a) {
+                if (g_usart1_recv_it_buf[0] != 0x0a) {
                     /* 不是0x0a(即\n) */
                     g_usart1_rx_status = 0; /* 接收错误,重新开始 */
                 } else {
@@ -516,11 +516,11 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
                 }
             } else {
                 /* 还没收到0x0d(即\r) */
-                if (g_usart1_recv_buf[0] == 0x0d) {
+                if (g_usart1_recv_it_buf[0] == 0x0d) {
                     g_usart1_rx_status |= 0x4000;
                 } else {
                     g_usart1_rx_buf[g_usart1_rx_status & 0X3FFF] =
-                        g_usart1_recv_buf[0];
+                        g_usart1_recv_it_buf[0];
                     g_usart1_rx_status++;
                     if (g_usart1_rx_status > (USART_REC_LEN - 1)) {
                         g_usart1_rx_status = 0; /* 接收数据错误,重新开始接收 */
@@ -528,8 +528,8 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
                 }
             }
         }
-        HAL_UART_Receive_IT(&g_usart1_handle, (uint8_t *)g_usart1_recv_buf,
-                            RXBUFFERSIZE);
+        HAL_UART_Receive_IT(&g_usart1_handle, (uint8_t *)g_usart1_recv_it_buf,
+                            RECV_IT_BUF_SIZE);
 #else  /* !USART1_USE_DMA_RX */
         uart_dmarx_done_callback(huart);
         if (huart->hdmarx->Init.Mode != DMA_CIRCULAR) {
@@ -551,7 +551,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
             /* 接收未完成 */
             if (g_usart2_rx_status & 0x4000) {
                 /* 接收到了0x0d(即\r) */
-                if (g_usart2_recv_buf[0] != 0x0a) {
+                if (g_usart2_recv_it_buf[0] != 0x0a) {
                     /* 不是0x0a(即\n) */
                     g_usart2_rx_status = 0; /* 接收错误,重新开始 */
                 } else {
@@ -559,11 +559,11 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
                 }
             } else {
                 /* 还没收到0x0d(即\r) */
-                if (g_usart2_recv_buf[0] == 0x0d) {
+                if (g_usart2_recv_it_buf[0] == 0x0d) {
                     g_usart2_rx_status |= 0x4000;
                 } else {
                     g_usart2_rx_buf[g_usart2_rx_status & 0X3FFF] =
-                        g_usart2_recv_buf[0];
+                        g_usart2_recv_it_buf[0];
                     g_usart2_rx_status++;
                     if (g_usart2_rx_status > (USART_REC_LEN - 1)) {
                         g_usart2_rx_status = 0; /* 接收数据错误,重新开始接收 */
@@ -571,8 +571,8 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
                 }
             }
         }
-        HAL_UART_Receive_IT(&g_usart2_handle, (uint8_t *)g_usart2_recv_buf,
-                            RXBUFFERSIZE);
+        HAL_UART_Receive_IT(&g_usart2_handle, (uint8_t *)g_usart2_recv_it_buf,
+                            RECV_IT_BUF_SIZE);
 #else  /* !USART2_USE_DMA_RX */
         uart_dmarx_done_callback(huart);
         if (huart->hdmarx->Init.Mode != DMA_CIRCULAR) {
@@ -594,7 +594,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
             /* 接收未完成 */
             if (g_usart3_rx_status & 0x4000) {
                 /* 接收到了0x0d(即\r) */
-                if (g_usart3_recv_buf[0] != 0x0a) {
+                if (g_usart3_recv_it_buf[0] != 0x0a) {
                     /* 不是0x0a(即\n) */
                     g_usart3_rx_status = 0; /* 接收错误,重新开始 */
                 } else {
@@ -602,11 +602,11 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
                 }
             } else {
                 /* 还没收到0x0d(即\r) */
-                if (g_usart3_recv_buf[0] == 0x0d) {
+                if (g_usart3_recv_it_buf[0] == 0x0d) {
                     g_usart3_rx_status |= 0x4000;
                 } else {
                     g_usart3_rx_buf[g_usart3_rx_status & 0X3FFF] =
-                        g_usart3_recv_buf[0];
+                        g_usart3_recv_it_buf[0];
                     g_usart3_rx_status++;
                     if (g_usart3_rx_status > (USART_REC_LEN - 1)) {
                         g_usart3_rx_status = 0; /* 接收数据错误,重新开始接收 */
@@ -614,8 +614,8 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
                 }
             }
         }
-        HAL_UART_Receive_IT(&g_usart3_handle, (uint8_t *)g_usart3_recv_buf,
-                            RXBUFFERSIZE);
+        HAL_UART_Receive_IT(&g_usart3_handle, (uint8_t *)g_usart3_recv_it_buf,
+                            RECV_IT_BUF_SIZE);
 #else  /* !USART3_USE_DMA_RX */
         uart_dmarx_done_callback(huart);
         if (huart->hdmarx->Init.Mode != DMA_CIRCULAR) {
@@ -658,7 +658,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
             }
         }
         HAL_UART_Receive_IT(&UART4_Handler, (uint8_t *)g_uart4_recv_buf,
-                            RXBUFFERSIZE);
+                            RECV_IT_BUF_SIZE);
 #else  /* !UART4_USE_DMA_RX */
         uart_dmarx_done_callback(huart);
         if (huart->hdmarx->Init.Mode != DMA_CIRCULAR) {
@@ -694,7 +694,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
                 }
             }
             HAL_UART_Receive_IT(&UART5_Handler, (uint8_t *)g_uart5_recv_buf,
-                                RXBUFFERSIZE);
+                                RECV_IT_BUF_SIZE);
         }
 #endif /* EN_UART5_RX */
     }

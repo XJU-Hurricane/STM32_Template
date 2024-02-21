@@ -20,7 +20,7 @@
 
 #define USART_REC_LEN 200 /* 定义USART最大接收字节数 200 */
 #define TX_BUF_LEN    256 /* 定义发送缓冲区字节数 256 */
-#define RXBUFFERSIZE  1   /* 接收缓冲区大小 */
+#define RECV_IT_BUF_SIZE  1   /* 接收缓冲区大小 */
 
 /**
  * @brief 是否使用串口,启用就在此处define
@@ -57,7 +57,7 @@ extern UART_HandleTypeDef g_usart1_handle;
 #if EN_USART1_RX
 extern uint8_t g_usart1_rx_buf[USART_REC_LEN];
 extern uint16_t g_usart1_rx_status;
-extern uint8_t g_usart1_recv_buf[RXBUFFERSIZE];
+
 #endif /* EN_USART1_RX */
 
 void usart1_init(uint32_t bound);
@@ -79,7 +79,7 @@ extern UART_HandleTypeDef g_usart2_handle;
 #if EN_USART2_RX
 extern uint8_t g_usart2_rx_buf[USART_REC_LEN];
 extern uint16_t g_usart2_rx_status;
-extern uint8_t g_usart2_recv_buf[RXBUFFERSIZE];
+
 #endif /* EN_USART2 */
 
 void usart2_init(uint32_t bound);
@@ -101,7 +101,7 @@ extern UART_HandleTypeDef g_usart3_handle;
 #if EN_USART3_RX
 extern uint8_t g_usart3_rx_buf[USART_REC_LEN];
 extern uint16_t g_usart3_rx_status;
-extern uint8_t g_usart3_recv_buf[RXBUFFERSIZE];
+
 #endif /* EN_USART3_RX */
 void usart3_init(uint32_t bound);
 #endif /* EN_USART3 */
@@ -122,7 +122,7 @@ extern UART_HandleTypeDef UART4_Handler;
 #if EN_UART4_RX
 extern uint8_t g_uart4_rx_buf[USART_REC_LEN];
 extern uint16_t g_uart4_rx_status;
-extern uint8_t g_uart4_recv_buf[RXBUFFERSIZE];
+
 #endif /* EN_UART4_RX */
 
 void uart4_init(uint32_t bound);
@@ -144,7 +144,7 @@ extern UART_HandleTypeDef UART5_Handler;
 #if EN_UART5_RX
 extern uint8_t g_uart5_rx_buf[USART_REC_LEN];
 extern uint16_t g_uart5_rx_status;
-extern uint8_t g_uart5_recv_buf[RXBUFFERSIZE];
+
 #endif /* EN_UART5_RX */
 
 void uart5_init(uint32_t bound);

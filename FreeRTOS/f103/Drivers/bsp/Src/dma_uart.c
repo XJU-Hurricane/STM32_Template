@@ -11,7 +11,6 @@
 
 #include "dma_uart.h"
 #include "stdlib.h"
-#include "uart.h"
 
 /*******************************************************************************
  * @defgroup 串口1 DMA

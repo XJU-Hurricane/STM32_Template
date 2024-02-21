@@ -12,11 +12,13 @@
  *          除非必要, 否则不建议使用UART7和UART8的DMA
  */
 
+
 #ifndef __DMA_UART_H
 #define __DMA_UART_H
 
 #include "ring_fifo.h"
 #include "sys.h"
+#include "uart.h"
 
 #ifdef __cplusplus
 extern "C" {

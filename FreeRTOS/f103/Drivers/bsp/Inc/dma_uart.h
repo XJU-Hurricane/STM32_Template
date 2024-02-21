@@ -8,11 +8,13 @@
  *          串口5无DMA通道
  *          打开对应的宏开关就可以使用DMA传输, 无需配置其他东西
  */
+
 #ifndef __DMA_UART_H
 #define __DMA_UART_H
 
 #include "ring_fifo.h"
 #include "sys.h"
+#include "uart.h"
 
 #ifdef __cplusplus
 extern "C" {

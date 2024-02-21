@@ -29,4 +29,8 @@ void led_init(void) {
     GPIO_Initure.Pull = GPIO_PULLUP;
     GPIO_Initure.Speed = GPIO_SPEED_FREQ_HIGH;
     HAL_GPIO_Init(LED1_PORT, &GPIO_Initure);
+
+    /* 关闭LED */
+    LED0(1);
+    LED1(1);
 }

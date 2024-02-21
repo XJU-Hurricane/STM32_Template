@@ -55,7 +55,7 @@ int main(void) {
             g_usart1_rx_status = 0;
         }
 
-        if (key != 0) {
+        if (key) {
             switch (key) {
                 case KEY0_PRES: {
                     printf("KEY0按下\r\n");

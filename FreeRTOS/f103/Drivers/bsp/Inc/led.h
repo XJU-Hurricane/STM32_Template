@@ -29,7 +29,7 @@
     (x) ? HAL_GPIO_WritePin(LED1_PORT, LED1_PIN, GPIO_PIN_SET)                 \
         : HAL_GPIO_WritePin(LED1_PORT, LED1_PIN, GPIO_PIN_RESET)
 
-#define LED0_TOGGLE() HAL_GPIO_TogglePin(LED1_PORT, LED1_PIN)
+#define LED0_TOGGLE() HAL_GPIO_TogglePin(LED0_PORT, LED0_PIN)
 #define LED1_TOGGLE() HAL_GPIO_TogglePin(LED1_PORT, LED1_PIN)
 
 void led_init(void);

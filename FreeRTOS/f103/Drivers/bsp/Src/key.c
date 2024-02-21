@@ -22,7 +22,7 @@ void key_init(void) {
 
     GPIO_Initure.Pin = KEY0_PIN;
     GPIO_Initure.Mode = GPIO_MODE_INPUT;
-    GPIO_Initure.Pull = GPIO_PULLDOWN;
+    GPIO_Initure.Pull = GPIO_PULLUP;
     GPIO_Initure.Speed = GPIO_SPEED_FREQ_HIGH;
     HAL_GPIO_Init(KEY0_PORT, &GPIO_Initure);
 
@@ -34,7 +34,7 @@ void key_init(void) {
 
     GPIO_Initure.Pin = WKUP_PIN;
     GPIO_Initure.Mode = GPIO_MODE_INPUT;
-    GPIO_Initure.Pull = GPIO_PULLUP;
+    GPIO_Initure.Pull = GPIO_PULLDOWN;
     GPIO_Initure.Speed = GPIO_SPEED_FREQ_HIGH;
     HAL_GPIO_Init(WKUP_PORT, &GPIO_Initure);
 }

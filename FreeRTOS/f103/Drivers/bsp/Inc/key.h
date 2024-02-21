@@ -36,4 +36,5 @@
 
 void key_init(void);
 uint8_t key_scan(uint8_t mode);
+
 #endif /* __KEY_H */

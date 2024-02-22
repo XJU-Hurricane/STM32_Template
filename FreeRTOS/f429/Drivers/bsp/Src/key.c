@@ -14,36 +14,36 @@
  *
  */
 void key_init(void) {
-    GPIO_InitTypeDef GPIO_Initure = {0};
+    GPIO_InitTypeDef gpio_initure = {0};
 
     KEY0_ENABLE();
     KEY1_ENABLE();
     KEY2_ENABLE();
     WKUP_ENABLE();
 
-    GPIO_Initure.Pin = KEY0_PIN;
-    GPIO_Initure.Mode = GPIO_MODE_INPUT;
-    GPIO_Initure.Pull = GPIO_PULLUP;
-    GPIO_Initure.Speed = GPIO_SPEED_FREQ_HIGH;
-    HAL_GPIO_Init(KEY0_PORT, &GPIO_Initure);
+    gpio_initure.Pin = KEY0_PIN;
+    gpio_initure.Mode = GPIO_MODE_INPUT;
+    gpio_initure.Pull = GPIO_PULLUP;
+    gpio_initure.Speed = GPIO_SPEED_FREQ_HIGH;
+    HAL_GPIO_Init(KEY0_PORT, &gpio_initure);
 
-    GPIO_Initure.Pin = KEY1_PIN;
-    GPIO_Initure.Mode = GPIO_MODE_INPUT;
-    GPIO_Initure.Pull = GPIO_PULLUP;
-    GPIO_Initure.Speed = GPIO_SPEED_FREQ_HIGH;
-    HAL_GPIO_Init(KEY1_PORT, &GPIO_Initure);
+    gpio_initure.Pin = KEY1_PIN;
+    gpio_initure.Mode = GPIO_MODE_INPUT;
+    gpio_initure.Pull = GPIO_PULLUP;
+    gpio_initure.Speed = GPIO_SPEED_FREQ_HIGH;
+    HAL_GPIO_Init(KEY1_PORT, &gpio_initure);
 
-    GPIO_Initure.Pin = KEY2_PIN;
-    GPIO_Initure.Mode = GPIO_MODE_INPUT;
-    GPIO_Initure.Pull = GPIO_PULLUP;
-    GPIO_Initure.Speed = GPIO_SPEED_FREQ_HIGH;
-    HAL_GPIO_Init(KEY2_PORT, &GPIO_Initure);
+    gpio_initure.Pin = KEY2_PIN;
+    gpio_initure.Mode = GPIO_MODE_INPUT;
+    gpio_initure.Pull = GPIO_PULLUP;
+    gpio_initure.Speed = GPIO_SPEED_FREQ_HIGH;
+    HAL_GPIO_Init(KEY2_PORT, &gpio_initure);
 
-    GPIO_Initure.Pin = WKUP_PIN;
-    GPIO_Initure.Mode = GPIO_MODE_INPUT;
-    GPIO_Initure.Pull = GPIO_PULLDOWN;
-    GPIO_Initure.Speed = GPIO_SPEED_FREQ_HIGH;
-    HAL_GPIO_Init(WKUP_PORT, &GPIO_Initure);
+    gpio_initure.Pin = WKUP_PIN;
+    gpio_initure.Mode = GPIO_MODE_INPUT;
+    gpio_initure.Pull = GPIO_PULLDOWN;
+    gpio_initure.Speed = GPIO_SPEED_FREQ_HIGH;
+    HAL_GPIO_Init(WKUP_PORT, &gpio_initure);
 }
 
 /**

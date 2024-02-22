@@ -391,20 +391,20 @@ void uart5_init(uint32_t bound) {
  * @param huart 串口句柄
  */
 void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
-    GPIO_InitTypeDef GPIO_Initure = {0};
+    GPIO_InitTypeDef gpio_initure = {0};
     if (huart->Instance == USART1) {
         __HAL_RCC_GPIOA_CLK_ENABLE();
         __HAL_RCC_USART1_CLK_ENABLE();
         __HAL_RCC_AFIO_CLK_ENABLE();
 
-        GPIO_Initure.Pin = GPIO_PIN_9;
-        GPIO_Initure.Mode = GPIO_MODE_AF_PP;
-        GPIO_Initure.Pull = GPIO_PULLUP;
-        GPIO_Initure.Speed = GPIO_SPEED_FREQ_HIGH;
-        HAL_GPIO_Init(GPIOA, &GPIO_Initure); /* PA9 */
-        GPIO_Initure.Pin = GPIO_PIN_10;
-        GPIO_Initure.Mode = GPIO_MODE_INPUT;
-        HAL_GPIO_Init(GPIOA, &GPIO_Initure); /* PA10 */
+        gpio_initure.Pin = GPIO_PIN_9;
+        gpio_initure.Mode = GPIO_MODE_AF_PP;
+        gpio_initure.Pull = GPIO_PULLUP;
+        gpio_initure.Speed = GPIO_SPEED_FREQ_HIGH;
+        HAL_GPIO_Init(GPIOA, &gpio_initure); /* PA9 */
+        gpio_initure.Pin = GPIO_PIN_10;
+        gpio_initure.Mode = GPIO_MODE_INPUT;
+        HAL_GPIO_Init(GPIOA, &gpio_initure); /* PA10 */
 #if EN_USART1_RX
         HAL_NVIC_EnableIRQ(USART1_IRQn);
         HAL_NVIC_SetPriority(USART1_IRQn, 2, 2);
@@ -414,14 +414,14 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
         __HAL_RCC_USART2_CLK_ENABLE();
         __HAL_RCC_AFIO_CLK_ENABLE();
 
-        GPIO_Initure.Pin = GPIO_PIN_2;
-        GPIO_Initure.Mode = GPIO_MODE_AF_PP;
-        GPIO_Initure.Pull = GPIO_PULLUP;
-        GPIO_Initure.Speed = GPIO_SPEED_FREQ_HIGH;
-        HAL_GPIO_Init(GPIOA, &GPIO_Initure); /* PA2 */
-        GPIO_Initure.Pin = GPIO_PIN_3;
-        GPIO_Initure.Mode = GPIO_MODE_INPUT;
-        HAL_GPIO_Init(GPIOA, &GPIO_Initure); /* PA3 */
+        gpio_initure.Pin = GPIO_PIN_2;
+        gpio_initure.Mode = GPIO_MODE_AF_PP;
+        gpio_initure.Pull = GPIO_PULLUP;
+        gpio_initure.Speed = GPIO_SPEED_FREQ_HIGH;
+        HAL_GPIO_Init(GPIOA, &gpio_initure); /* PA2 */
+        gpio_initure.Pin = GPIO_PIN_3;
+        gpio_initure.Mode = GPIO_MODE_INPUT;
+        HAL_GPIO_Init(GPIOA, &gpio_initure); /* PA3 */
 #if EN_USART2_RX
         HAL_NVIC_EnableIRQ(USART2_IRQn);
         HAL_NVIC_SetPriority(USART2_IRQn, 2, 2);
@@ -431,14 +431,14 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
         __HAL_RCC_USART3_CLK_ENABLE();
         __HAL_RCC_AFIO_CLK_ENABLE();
 
-        GPIO_Initure.Pin = GPIO_PIN_10;
-        GPIO_Initure.Mode = GPIO_MODE_AF_PP;
-        GPIO_Initure.Pull = GPIO_PULLUP;
-        GPIO_Initure.Speed = GPIO_SPEED_FREQ_HIGH;
-        HAL_GPIO_Init(GPIOB, &GPIO_Initure); /* PB10 */
-        GPIO_Initure.Pin = GPIO_PIN_11;
-        GPIO_Initure.Mode = GPIO_MODE_INPUT;
-        HAL_GPIO_Init(GPIOB, &GPIO_Initure); /* PB11 */
+        gpio_initure.Pin = GPIO_PIN_10;
+        gpio_initure.Mode = GPIO_MODE_AF_PP;
+        gpio_initure.Pull = GPIO_PULLUP;
+        gpio_initure.Speed = GPIO_SPEED_FREQ_HIGH;
+        HAL_GPIO_Init(GPIOB, &gpio_initure); /* PB10 */
+        gpio_initure.Pin = GPIO_PIN_11;
+        gpio_initure.Mode = GPIO_MODE_INPUT;
+        HAL_GPIO_Init(GPIOB, &gpio_initure); /* PB11 */
 #if EN_USART3_RX
         HAL_NVIC_EnableIRQ(USART3_IRQn);
         HAL_NVIC_SetPriority(USART3_IRQn, 2, 2);
@@ -448,14 +448,14 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
         __HAL_RCC_UART4_CLK_ENABLE();
         __HAL_RCC_AFIO_CLK_ENABLE();
 
-        GPIO_Initure.Pin = GPIO_PIN_10;
-        GPIO_Initure.Mode = GPIO_MODE_AF_PP;
-        GPIO_Initure.Pull = GPIO_PULLUP;
-        GPIO_Initure.Speed = GPIO_SPEED_FREQ_HIGH;
-        HAL_GPIO_Init(GPIOC, &GPIO_Initure); /* PC10 */
-        GPIO_Initure.Pin = GPIO_PIN_11;
-        GPIO_Initure.Mode = GPIO_MODE_INPUT;
-        HAL_GPIO_Init(GPIOC, &GPIO_Initure); /* PC11 */
+        gpio_initure.Pin = GPIO_PIN_10;
+        gpio_initure.Mode = GPIO_MODE_AF_PP;
+        gpio_initure.Pull = GPIO_PULLUP;
+        gpio_initure.Speed = GPIO_SPEED_FREQ_HIGH;
+        HAL_GPIO_Init(GPIOC, &gpio_initure); /* PC10 */
+        gpio_initure.Pin = GPIO_PIN_11;
+        gpio_initure.Mode = GPIO_MODE_INPUT;
+        HAL_GPIO_Init(GPIOC, &gpio_initure); /* PC11 */
 #if EN_UART4_RX
         HAL_NVIC_EnableIRQ(UART4_IRQn);
         HAL_NVIC_SetPriority(UART4_IRQn, 2, 2);
@@ -466,14 +466,14 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
         __HAL_RCC_UART5_CLK_ENABLE();
         __HAL_RCC_AFIO_CLK_ENABLE();
 
-        GPIO_Initure.Pin = GPIO_PIN_12;
-        GPIO_Initure.Mode = GPIO_MODE_AF_PP;
-        GPIO_Initure.Pull = GPIO_PULLUP;
-        GPIO_Initure.Speed = GPIO_SPEED_FREQ_HIGH;
-        HAL_GPIO_Init(GPIOC, &GPIO_Initure); /* PC12 */
-        GPIO_Initure.Pin = GPIO_PIN_2;
-        GPIO_Initure.Mode = GPIO_MODE_INPUT;
-        HAL_GPIO_Init(GPIOD, &GPIO_Initure); /* PD2 */
+        gpio_initure.Pin = GPIO_PIN_12;
+        gpio_initure.Mode = GPIO_MODE_AF_PP;
+        gpio_initure.Pull = GPIO_PULLUP;
+        gpio_initure.Speed = GPIO_SPEED_FREQ_HIGH;
+        HAL_GPIO_Init(GPIOC, &gpio_initure); /* PC12 */
+        gpio_initure.Pin = GPIO_PIN_2;
+        gpio_initure.Mode = GPIO_MODE_INPUT;
+        HAL_GPIO_Init(GPIOD, &gpio_initure); /* PD2 */
 #if EN_UART5_RX
         HAL_NVIC_EnableIRQ(UART5_IRQn);
         HAL_NVIC_SetPriority(UART5_IRQn, 2, 2);

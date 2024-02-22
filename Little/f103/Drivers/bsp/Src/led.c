@@ -13,22 +13,22 @@
  *
  */
 void led_init(void) {
-    GPIO_InitTypeDef GPIO_Initure = {0};
+    GPIO_InitTypeDef gpio_initure = {0};
 
     LED0_ENABLE();
     LED1_ENABLE();
 
-    GPIO_Initure.Pin = LED0_PIN;
-    GPIO_Initure.Mode = GPIO_MODE_OUTPUT_PP;
-    GPIO_Initure.Pull = GPIO_PULLUP;
-    GPIO_Initure.Speed = GPIO_SPEED_FREQ_HIGH;
-    HAL_GPIO_Init(LED0_PORT, &GPIO_Initure);
+    gpio_initure.Pin = LED0_PIN;
+    gpio_initure.Mode = GPIO_MODE_OUTPUT_PP;
+    gpio_initure.Pull = GPIO_PULLUP;
+    gpio_initure.Speed = GPIO_SPEED_FREQ_HIGH;
+    HAL_GPIO_Init(LED0_PORT, &gpio_initure);
 
-    GPIO_Initure.Pin = LED1_PIN;
-    GPIO_Initure.Mode = GPIO_MODE_OUTPUT_PP;
-    GPIO_Initure.Pull = GPIO_PULLUP;
-    GPIO_Initure.Speed = GPIO_SPEED_FREQ_HIGH;
-    HAL_GPIO_Init(LED1_PORT, &GPIO_Initure);
+    gpio_initure.Pin = LED1_PIN;
+    gpio_initure.Mode = GPIO_MODE_OUTPUT_PP;
+    gpio_initure.Pull = GPIO_PULLUP;
+    gpio_initure.Speed = GPIO_SPEED_FREQ_HIGH;
+    HAL_GPIO_Init(LED1_PORT, &gpio_initure);
 
     /* 关闭LED */
     LED0(1);

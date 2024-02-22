@@ -24,7 +24,7 @@ static uint8_t g_uart_tx_buf[TX_BUF_LEN];
  */
 
 #ifdef EN_USART1
-UART_HandleTypeDef g_usart1_handle;
+UART_HandleTypeDef g_usart1_handle = {0};
 #if EN_USART1_RX
 #if !USART1_USE_DMA_RX
 uint8_t g_usart1_rx_buf[USART_REC_LEN];
@@ -94,7 +94,7 @@ void usart1_init(uint32_t bound) {
  */
 
 #ifdef EN_USART2
-UART_HandleTypeDef g_usart2_handle;
+UART_HandleTypeDef g_usart2_handle = {0};
 #if EN_USART2_RX
 #if !USART2_USE_DMA_RX
 uint8_t g_usart2_rx_buf[USART_REC_LEN];
@@ -162,7 +162,7 @@ void usart2_init(uint32_t bound) {
  */
 
 #ifdef EN_USART3
-UART_HandleTypeDef g_usart3_handle;
+UART_HandleTypeDef g_usart3_handle = {0};
 #if EN_USART3_RX
 #if !USART3_USE_DMA_RX
 uint8_t g_usart3_rx_buf[USART_REC_LEN];
@@ -230,7 +230,7 @@ void usart3_init(uint32_t bound) {
  */
 
 #ifdef EN_UART4
-UART_HandleTypeDef UART4_Handler;
+UART_HandleTypeDef g_uart4_handle = {0};
 #if EN_UART4_RX
 #if !UART4_USE_DMA_RX
 uint8_t g_uart4_rx_buf[USART_REC_LEN];
@@ -248,13 +248,13 @@ static uint8_t g_uart4_recv_buf[RECV_IT_BUF_SIZE];
 void UART4_IRQHandler(void) {
 
 #if UART4_USE_IDLE_IT
-    if (__HAL_UART_GET_FLAG(&UART4_Handler, UART_FLAG_IDLE)) {
-        __HAL_USART_CLEAR_IDLEFLAG(&UART4_Handler);
-        uart_dmarx_idle_callback(&UART4_Handler);
+    if (__HAL_UART_GET_FLAG(&g_uart4_handle, UART_FLAG_IDLE)) {
+        __HAL_USART_CLEAR_IDLEFLAG(&g_uart4_handle);
+        uart_dmarx_idle_callback(&g_uart4_handle);
     }
 #endif /* UART4_USE_IDLE_IT */
 
-    HAL_UART_IRQHandler(&UART4_Handler); /* 调用HAL库中断处理公用函数 */
+    HAL_UART_IRQHandler(&g_uart4_handle); /* 调用HAL库中断处理公用函数 */
 }
 #endif /* EN_UART4_RX */
 /**
@@ -262,14 +262,14 @@ void UART4_IRQHandler(void) {
  * @param bound 波特率
  */
 void uart4_init(uint32_t bound) {
-    UART4_Handler.Instance = UART4;
-    UART4_Handler.Init.BaudRate = bound;
-    UART4_Handler.Init.WordLength = UART_WORDLENGTH_8B;
-    UART4_Handler.Init.StopBits = UART_STOPBITS_1;
-    UART4_Handler.Init.Parity = UART_PARITY_NONE;
-    UART4_Handler.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-    UART4_Handler.Init.Mode = UART_MODE_TX_RX;
-    HAL_UART_Init(&UART4_Handler);
+    g_uart4_handle.Instance = UART4;
+    g_uart4_handle.Init.BaudRate = bound;
+    g_uart4_handle.Init.WordLength = UART_WORDLENGTH_8B;
+    g_uart4_handle.Init.StopBits = UART_STOPBITS_1;
+    g_uart4_handle.Init.Parity = UART_PARITY_NONE;
+    g_uart4_handle.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+    g_uart4_handle.Init.Mode = UART_MODE_TX_RX;
+    HAL_UART_Init(&g_uart4_handle);
 
 #if UART4_USE_DMA_TX
     /* 打开DMA发送 */
@@ -281,7 +281,7 @@ void uart4_init(uint32_t bound) {
     /* 使用DMA, 打开DMA接收 */
     uart4_dmarx_init(4096, 128);
 #else  /* UART4_USE_DMA_RX */
-    HAL_UART_Receive_IT(&UART4_Handler, (uint8_t *)g_uart4_recv_buf,
+    HAL_UART_Receive_IT(&g_uart4_handle, (uint8_t *)g_uart4_recv_buf,
                         RECV_IT_BUF_SIZE);
 #endif /* UART4_USE_DMA_RX */
 #endif /* EN_UART4_RX */
@@ -298,7 +298,7 @@ void uart4_init(uint32_t bound) {
  */
 
 #ifdef EN_UART5
-UART_HandleTypeDef UART5_Handler;
+UART_HandleTypeDef g_uart5_handle = {0};
 #if EN_UART5_RX
 uint8_t g_uart5_rx_buf[USART_REC_LEN];
 /**
@@ -313,7 +313,7 @@ static uint8_t g_uart5_recv_buf[RECV_IT_BUF_SIZE];
  */
 void UART5_IRQHandler(void) {
 
-    HAL_UART_IRQHandler(&UART5_Handler); /* 调用HAL库中断处理公用函数 */
+    HAL_UART_IRQHandler(&g_uart5_handle); /* 调用HAL库中断处理公用函数 */
 }
 #endif /* EN_UART5_RX */
 /**
@@ -321,16 +321,16 @@ void UART5_IRQHandler(void) {
  * @param bound 波特率
  */
 void uart5_init(uint32_t bound) {
-    UART5_Handler.Instance = UART5;
-    UART5_Handler.Init.BaudRate = bound;
-    UART5_Handler.Init.WordLength = UART_WORDLENGTH_8B;
-    UART5_Handler.Init.StopBits = UART_STOPBITS_1;
-    UART5_Handler.Init.Parity = UART_PARITY_NONE;
-    UART5_Handler.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-    UART5_Handler.Init.Mode = UART_MODE_TX_RX;
-    HAL_UART_Init(&UART5_Handler);
+    g_uart5_handle.Instance = UART5;
+    g_uart5_handle.Init.BaudRate = bound;
+    g_uart5_handle.Init.WordLength = UART_WORDLENGTH_8B;
+    g_uart5_handle.Init.StopBits = UART_STOPBITS_1;
+    g_uart5_handle.Init.Parity = UART_PARITY_NONE;
+    g_uart5_handle.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+    g_uart5_handle.Init.Mode = UART_MODE_TX_RX;
+    HAL_UART_Init(&g_uart5_handle);
 #if EN_UART5_RX
-    HAL_UART_Receive_IT(&UART5_Handler, (uint8_t *)g_uart5_recv_buf,
+    HAL_UART_Receive_IT(&g_uart5_handle, (uint8_t *)g_uart5_recv_buf,
                         RECV_IT_BUF_SIZE);
 #endif /* EN_UART5_RX */
 }
@@ -617,7 +617,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
                 }
             }
         }
-        HAL_UART_Receive_IT(&UART4_Handler, (uint8_t *)g_uart4_recv_buf,
+        HAL_UART_Receive_IT(&g_uart4_handle, (uint8_t *)g_uart4_recv_buf,
                             RECV_IT_BUF_SIZE);
 #else  /* !UART4_USE_DMA_RX */
         uart_dmarx_done_callback(huart);
@@ -653,7 +653,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
                     }
                 }
             }
-            HAL_UART_Receive_IT(&UART5_Handler, (uint8_t *)g_uart5_recv_buf,
+            HAL_UART_Receive_IT(&g_uart5_handle, (uint8_t *)g_uart5_recv_buf,
                                 RECV_IT_BUF_SIZE);
         }
 #endif /* EN_UART5_RX */

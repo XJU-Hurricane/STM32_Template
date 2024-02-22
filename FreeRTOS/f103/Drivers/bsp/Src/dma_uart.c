@@ -452,7 +452,7 @@ void uart4_dmatx_init(uint32_t fifo_size, uint32_t buf_size) {
     g_uart4_dmatx_handle.Init.Priority = DMA_PRIORITY_LOW;
 
     HAL_DMA_Init(&g_uart4_dmatx_handle);
-    __HAL_LINKDMA(&UART4_Handler, hdmatx, g_uart4_dmatx_handle);
+    __HAL_LINKDMA(&g_uart4_handle, hdmatx, g_uart4_dmatx_handle);
 
     HAL_NVIC_SetPriority(DMA2_Channel4_5_IRQn, 0, 1);
     HAL_NVIC_EnableIRQ(DMA2_Channel4_5_IRQn);
@@ -506,16 +506,16 @@ void uart4_dmarx_init(uint32_t fifo_size, uint32_t buf_size) {
     g_uart4_dmarx_handle.Init.Priority = DMA_PRIORITY_HIGH;
 
     HAL_DMA_Init(&g_uart4_dmarx_handle);
-    __HAL_LINKDMA(&UART4_Handler, hdmarx, g_uart4_dmarx_handle);
+    __HAL_LINKDMA(&g_uart4_handle, hdmarx, g_uart4_dmarx_handle);
 
     HAL_NVIC_SetPriority(DMA2_Channel3_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(DMA2_Channel3_IRQn);
 
 #if UART4_USE_IDLE_IT
-    __HAL_UART_ENABLE_IT(&UART4_Handler, UART_IT_IDLE);
-    __HAL_UART_CLEAR_IDLEFLAG(&UART4_Handler);
+    __HAL_UART_ENABLE_IT(&g_uart4_handle, UART_IT_IDLE);
+    __HAL_UART_CLEAR_IDLEFLAG(&g_uart4_handle);
 #endif /* UART4_USE_IDLE_IT */
-    HAL_UART_Receive_DMA(&UART4_Handler, (uint8_t *)g_uart4_recv_buf, buf_size);
+    HAL_UART_Receive_DMA(&g_uart4_handle, (uint8_t *)g_uart4_recv_buf, buf_size);
 }
 
 /**

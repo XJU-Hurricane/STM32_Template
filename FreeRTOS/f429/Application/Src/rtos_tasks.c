@@ -18,28 +18,28 @@
  * START_TASK 任务 配置
  * 包括: 任务句柄 任务优先级 堆栈大小 创建任务
  */
-#define START_TASK_PRIO 1                /* 任务优先级 */
-#define START_STK_SIZE  128              /* 任务堆栈大小 */
-static TaskHandle_t g_start_task_handle; /* 任务句柄 */
-void start_task(void *pvParameters);     /* 任务函数 */
+#define START_TASK_PRIO 1                      /* 任务优先级 */
+#define START_STK_SIZE  128                    /* 任务堆栈大小 */
+static TaskHandle_t g_start_task_handle = {0}; /* 任务句柄 */
+void start_task(void *pvParameters);           /* 任务函数 */
 
 /**
  * TASK1 任务 配置
  * 包括: 任务句柄 任务优先级 堆栈大小 创建任务
  */
-#define TASK1_PRIO     2            /* 任务优先级 */
-#define TASK1_STK_SIZE 128          /* 任务堆栈大小 */
-static TaskHandle_t g_task1_handle; /* 任务句柄 */
-void task1(void *pvParameters);     /* 任务函数 */
+#define TASK1_PRIO     2                  /* 任务优先级 */
+#define TASK1_STK_SIZE 128                /* 任务堆栈大小 */
+static TaskHandle_t g_task1_handle = {0}; /* 任务句柄 */
+void task1(void *pvParameters);           /* 任务函数 */
 
 /**
  * TASK2 任务 配置
  * 包括: 任务句柄 任务优先级 堆栈大小 创建任务
  */
-#define TASK2_PRIO     2            /* 任务优先级 */
-#define TASK2_STK_SIZE 128          /* 任务堆栈大小 */
-static TaskHandle_t g_task2_handle; /* 任务句柄 */
-void task2(void *pvParameters);     /* 任务函数 */
+#define TASK2_PRIO     2                  /* 任务优先级 */
+#define TASK2_STK_SIZE 128                /* 任务堆栈大小 */
+static TaskHandle_t g_task2_handle = {0}; /* 任务句柄 */
+void task2(void *pvParameters);           /* 任务函数 */
 
 /*****************************************************************************/
 

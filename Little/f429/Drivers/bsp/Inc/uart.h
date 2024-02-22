@@ -17,9 +17,9 @@
 #include "stdio.h"
 #include "sys.h"
 
-#define USART_REC_LEN 200 /* 定义USART最大接收字节数 200 */
-#define TX_BUF_LEN    256 /* 定义发送缓冲区字节数 256 */
-#define RECV_IT_BUF_SIZE  1   /* 接收缓冲区大小 */
+#define USART_REC_LEN    200 /* 定义USART最大接收字节数 200 */
+#define TX_BUF_LEN       256 /* 定义发送缓冲区字节数 256 */
+#define RECV_IT_BUF_SIZE 1   /* 接收缓冲区大小 */
 
 /**
  * @brief 是否使用串口,启用就在此处define
@@ -122,7 +122,7 @@ void usart3_init(uint32_t bound);
 
 #ifdef EN_UART4
 /* 句柄 */
-extern UART_HandleTypeDef UART4_Handler;
+extern UART_HandleTypeDef g_uart4_handle;
 /* 接收buf */
 #if EN_UART4_RX
 extern uint8_t g_uart4_rx_buf[USART_REC_LEN];
@@ -144,7 +144,7 @@ void uart4_init(uint32_t bound);
 
 #ifdef EN_UART5
 /* 句柄 */
-extern UART_HandleTypeDef UART5_Handler;
+extern UART_HandleTypeDef g_uart5_handle;
 /* 接收buf */
 #if EN_UART5_RX
 extern uint8_t g_uart5_rx_buf[USART_REC_LEN];
@@ -188,7 +188,7 @@ void usart6_init(uint32_t bound);
 
 #ifdef EN_UART7
 /* 句柄 */
-extern UART_HandleTypeDef UART7_Handler;
+extern UART_HandleTypeDef g_uart7_handle;
 /* 接收buf */
 #if EN_UART7_RX
 extern uint8_t g_uart7_rx_buf[USART_REC_LEN];
@@ -210,7 +210,7 @@ void uart7_init(uint32_t bound);
 
 #ifdef EN_UART8
 /* 句柄 */
-extern UART_HandleTypeDef UART8_Handler;
+extern UART_HandleTypeDef g_uart8_handle;
 /* 接收buf */
 #if EN_UART8_RX
 extern uint8_t g_uart8_rx_buf[USART_REC_LEN];

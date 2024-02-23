@@ -176,7 +176,7 @@ void uart_dmatx_write(UART_HandleTypeDef *huart, const void *data,
 void uart_dmatx_send(UART_HandleTypeDef *huart);
 
 void uart_dmarx_idle_callback(UART_HandleTypeDef *huart);
-void uart_dmarx_halfdone_callbackk(UART_HandleTypeDef *huart);
+void uart_dmarx_halfdone_callback(UART_HandleTypeDef *huart);
 void uart_dmarx_done_callback(UART_HandleTypeDef *huart);
 uint32_t uart_dmarx_read(UART_HandleTypeDef *huart, void *buf, uint32_t len);
 

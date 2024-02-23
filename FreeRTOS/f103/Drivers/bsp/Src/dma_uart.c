@@ -735,7 +735,7 @@ void uart_dmarx_idle_callback(UART_HandleTypeDef *huart) {
  *
  * @param huart 串口句柄
  */
-void uart_dmarx_halfdone_callbackk(UART_HandleTypeDef *huart) {
+void uart_dmarx_halfdone_callback(UART_HandleTypeDef *huart) {
     uart_rx_fifo_t *uart_rx_fifo = UART_RX_Identify(huart);
 
     if (uart_rx_fifo == NULL) {

@@ -706,7 +706,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
  * @param huart 串口句柄
  */
 void HAL_UART_RxHalfCpltCallback(UART_HandleTypeDef *huart) {
-    uart_dmarx_halfdone_callbackk(huart);
+    uart_dmarx_halfdone_callback(huart);
 }
 
 /**

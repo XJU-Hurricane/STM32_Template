@@ -268,7 +268,9 @@
           "RTE/_Template",
           ".eide/deps",
           "Application/Inc",
-          "Middlewares/Inc"
+          "Middlewares/Inc",
+          ".cmsis/driver/Include",
+          ".cmsis/driver/VIO/Include"
         ],
         "libList": [
           ".cmsis/libdsp",

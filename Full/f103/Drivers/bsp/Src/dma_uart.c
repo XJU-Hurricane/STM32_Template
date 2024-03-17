@@ -544,7 +544,7 @@ void DMA2_Channel3_IRQHandler(void) {
  * @param uart_fifo 串口发送FIFO
  * @return uint32_t 读出的长度
  */
-static inline uint32_t UART_Read_TxFifo(uart_tx_fifo_t *uart_fifo) {
+static inline uint32_t uart_read_tx_fifo(uart_tx_fifo_t *uart_fifo) {
     return ring_fifo_read(uart_fifo->tx_fifo, uart_fifo->send_buf,
                           uart_fifo->send_buf_size);
 }
@@ -555,7 +555,7 @@ static inline uint32_t UART_Read_TxFifo(uart_tx_fifo_t *uart_fifo) {
  * @param huart 串口句柄
  * @return uart_tx_fifo_t* FIFO指针
  */
-static inline uart_tx_fifo_t *UART_TX_Identify(UART_HandleTypeDef *huart) {
+static inline uart_tx_fifo_t *uart_tx_identify(UART_HandleTypeDef *huart) {
     /* 指定发送FIFO */
     if (huart->Instance == USART1) {
 #if USART1_USE_DMA_TX
@@ -583,7 +583,7 @@ static inline uart_tx_fifo_t *UART_TX_Identify(UART_HandleTypeDef *huart) {
  * @param huart 串口句柄
  */
 void uart_dmatx_clear_tc_flag(UART_HandleTypeDef *huart) {
-    uart_tx_fifo_t *tx_fifo = UART_TX_Identify(huart);
+    uart_tx_fifo_t *tx_fifo = uart_tx_identify(huart);
 
     if (tx_fifo == NULL) {
         return;
@@ -605,7 +605,7 @@ void uart_dmatx_write(UART_HandleTypeDef *huart, const void *data,
         return;
     }
 
-    uart_tx_fifo_t *send_tx_fifo = UART_TX_Identify(huart);
+    uart_tx_fifo_t *send_tx_fifo = uart_tx_identify(huart);
 
     if (send_tx_fifo == NULL) {
         return;
@@ -624,7 +624,7 @@ void uart_dmatx_write(UART_HandleTypeDef *huart, const void *data,
  * @note 先使用`UART_DMARX_FIFO_Write`写入数据
  */
 void uart_dmatx_send(UART_HandleTypeDef *huart) {
-    uart_tx_fifo_t *send_tx_fifo = UART_TX_Identify(huart);
+    uart_tx_fifo_t *send_tx_fifo = uart_tx_identify(huart);
 
     if (send_tx_fifo == NULL) {
         return;
@@ -635,7 +635,7 @@ void uart_dmatx_send(UART_HandleTypeDef *huart) {
         return;
     }
 
-    uint32_t len = UART_Read_TxFifo(send_tx_fifo);
+    uint32_t len = uart_read_tx_fifo(send_tx_fifo);
     /* FIFO为空 */
     if (!len) {
         return;
@@ -656,7 +656,7 @@ void uart_dmatx_send(UART_HandleTypeDef *huart) {
  * @param data 要写入的数据
  * @param len 数据长度
  */
-static inline void UART_Write_RxFifo(uart_rx_fifo_t *uart_fifo,
+static inline void uart_write_rx_fifo(uart_rx_fifo_t *uart_fifo,
                                      const void *data, uint32_t len) {
     if ((data == NULL) || (len == 0)) {
         return;
@@ -674,7 +674,7 @@ static inline void UART_Write_RxFifo(uart_rx_fifo_t *uart_fifo,
  * @param huart 串口句柄
  * @return uart_rx_fifo_t* FIFO指针
  */
-static inline uart_rx_fifo_t *UART_RX_Identify(UART_HandleTypeDef *huart) {
+static inline uart_rx_fifo_t *uart_rx_identify(UART_HandleTypeDef *huart) {
     /* 指定接收FIFO */
     if (huart->Instance == USART1) {
 #if USART1_USE_DMA_RX
@@ -702,7 +702,7 @@ static inline uart_rx_fifo_t *UART_RX_Identify(UART_HandleTypeDef *huart) {
  * @param huart 串口句柄
  */
 void uart_dmarx_idle_callback(UART_HandleTypeDef *huart) {
-    uart_rx_fifo_t *uart_rx_fifo = UART_RX_Identify(huart);
+    uart_rx_fifo_t *uart_rx_fifo = uart_rx_identify(huart);
 
     if (uart_rx_fifo == NULL) {
         return;
@@ -727,7 +727,7 @@ void uart_dmarx_idle_callback(UART_HandleTypeDef *huart) {
     copy = tail_ptr - offset;
     uart_rx_fifo->head_ptr += copy;
 
-    UART_Write_RxFifo(uart_rx_fifo, huart->pRxBuffPtr + offset, copy);
+    uart_write_rx_fifo(uart_rx_fifo, huart->pRxBuffPtr + offset, copy);
 }
 
 /**
@@ -736,7 +736,7 @@ void uart_dmarx_idle_callback(UART_HandleTypeDef *huart) {
  * @param huart 串口句柄
  */
 void uart_dmarx_halfdone_callback(UART_HandleTypeDef *huart) {
-    uart_rx_fifo_t *uart_rx_fifo = UART_RX_Identify(huart);
+    uart_rx_fifo_t *uart_rx_fifo = uart_rx_identify(huart);
 
     if (uart_rx_fifo == NULL) {
         return;
@@ -761,7 +761,7 @@ void uart_dmarx_halfdone_callback(UART_HandleTypeDef *huart) {
     copy = tail_ptr - offset;
     uart_rx_fifo->head_ptr += copy;
 
-    UART_Write_RxFifo(uart_rx_fifo, huart->pRxBuffPtr + offset, copy);
+    uart_write_rx_fifo(uart_rx_fifo, huart->pRxBuffPtr + offset, copy);
 }
 
 /**
@@ -770,7 +770,7 @@ void uart_dmarx_halfdone_callback(UART_HandleTypeDef *huart) {
  * @param huart 串口句柄
  */
 void uart_dmarx_done_callback(UART_HandleTypeDef *huart) {
-    uart_rx_fifo_t *uart_rx_fifo = UART_RX_Identify(huart);
+    uart_rx_fifo_t *uart_rx_fifo = uart_rx_identify(huart);
 
     if (uart_rx_fifo == NULL) {
         return;
@@ -795,7 +795,7 @@ void uart_dmarx_done_callback(UART_HandleTypeDef *huart) {
     copy = tail_ptr - offset;
     uart_rx_fifo->head_ptr += copy;
 
-    UART_Write_RxFifo(uart_rx_fifo, huart->pRxBuffPtr + offset, copy);
+    uart_write_rx_fifo(uart_rx_fifo, huart->pRxBuffPtr + offset, copy);
 }
 
 /**
@@ -810,7 +810,7 @@ uint32_t uart_dmarx_read(UART_HandleTypeDef *huart, void *buf, uint32_t len) {
     if ((buf == NULL) || (len == 0)) {
         return 0;
     }
-    uart_rx_fifo_t *uart_rx_fifo = UART_RX_Identify(huart);
+    uart_rx_fifo_t *uart_rx_fifo = uart_rx_identify(huart);
 
     if (uart_rx_fifo == NULL) {
         return 0;
